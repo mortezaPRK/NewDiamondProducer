@@ -1,0 +1,7 @@
+<use   name="SimPPS/PPSDiamondDigiProducer"/>
+<use   name="PhysicsTools/UtilAlgos"/>
+<use   name="FWCore/ServiceRegistry"/>
+
+<library name="SimPPSDiamondDigiProducerPlugins" file="*.cc">
+<flags   EDM_PLUGIN="1"/>
+</library>
