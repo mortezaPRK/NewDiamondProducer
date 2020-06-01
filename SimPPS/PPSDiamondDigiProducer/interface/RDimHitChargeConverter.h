@@ -1,5 +1,5 @@
-#ifndef SimPPS_RDDigiProducer_RP_HIT_CHARGE_CONVERTER_H
-#define SimPPS_RDDigiProducer_RP_HIT_CHARGE_CONVERTER_H
+#ifndef SimPPS_PPSDiamondDigiProducer_RDim_HIT_CHARGE_CONVERTER_H
+#define SimPPS_PPSDiamondDigiProducer_RDim_HIT_CHARGE_CONVERTER_H
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "SimDataFormats/TrackingHit/interface/PSimHit.h"
@@ -21,4 +21,4 @@ private:
   int verbosity_;
 };
 
-#endif  //SimPPS_RDDigiProducer_RP_HIT_CHARGE_CONVERTER_H
+#endif  //SimPPS_PPSDiamondDigiProducer_RDim_HIT_CHARGE_CONVERTER_H

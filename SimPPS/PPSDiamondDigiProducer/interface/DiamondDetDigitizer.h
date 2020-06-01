@@ -15,13 +15,11 @@
 
 #include "DataFormats/CTPPSDigi/interface/CTPPSDiamondDigi.h"
 
-namespace CLHEP
-{
+namespace CLHEP {
   class HepRandomEngine;
 }
 
-class DiamondDetDigitizer
-{
+class DiamondDetDigitizer {
 public:
   DiamondDetDigitizer(const edm::ParameterSet &params,
                       CLHEP::HepRandomEngine &eng,

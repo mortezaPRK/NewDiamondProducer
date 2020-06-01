@@ -79,7 +79,6 @@ private:
 
   edm::ParameterSet conf_;
 
-
   CLHEP::HepRandomEngine* rndEngine_ = nullptr;
   int verbosity_;
 };

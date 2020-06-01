@@ -14,10 +14,10 @@ public:
 
   RDimEnergyDepositUnit(double energy, double x, double y, double z) : energy_(energy), position_(x, y, z){};
 
-  RDimEnergyDepositUnit(double energy, const Local3DPoint& position) : energy_(energy), position_(position){};
+  RDimEnergyDepositUnit(double energy, const Local3DPoint &position) : energy_(energy), position_(position){};
 
   inline double Energy() const { return energy_; }
-  inline const Local3DPoint& Position() const { return position_; }
+  inline const Local3DPoint &Position() const { return position_; }
 
   inline void setEnergy(double e) { energy_ = e; }
   inline void setPosition(Local3DPoint p) { position_ = p; }

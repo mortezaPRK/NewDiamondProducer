@@ -30,6 +30,4 @@ std::vector<RPixSignalPoint> RDimLinearChargeCollectionDrifter::Drift(
 }
 
 // TODO: implement
-double RDimLinearChargeCollectionDrifter::getSigma_(double z) {
-  return charge_cloud_sigmas_vect_[0];
-}
+double RDimLinearChargeCollectionDrifter::getSigma_(double z) { return charge_cloud_sigmas_vect_[0]; }
