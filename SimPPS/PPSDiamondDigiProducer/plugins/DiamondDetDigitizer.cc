@@ -2,6 +2,7 @@
 #include <iostream>
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "SimPPS/PPSDiamondDigiProducer/interface/DiamondDetDigitizer.h"
+#include "SimPPS/PPSDiamondDigiProducer/interface/RDimHitChargeConverter.h"
 
 DiamondDetDigitizer::DiamondDetDigitizer(const edm::ParameterSet &params,
                                    CLHEP::HepRandomEngine &eng,
@@ -9,7 +10,7 @@ DiamondDetDigitizer::DiamondDetDigitizer(const edm::ParameterSet &params,
                                    const edm::EventSetup &iSetup)
     : det_id_(det_id) {
   verbosity_ = params.getParameter<int>("DiamondVerbosity");
-  theRDHitChargeConverter = std::make_unique<RDHitChargeConverter>(params, eng, det_id_);
+  theRDimHitChargeConverter = std::make_unique<RDimHitChargeConverter>(params, eng, det_id_);
 }
 
 DiamondDetDigitizer::~DiamondDetDigitizer() {}
@@ -21,7 +22,7 @@ void DiamondDetDigitizer::run(const std::vector<PSimHit> &input,
 
   int input_size = input.size();
   for (int i = 0; i < input_size; ++i) {
-    simromanpot::strip_charge_map the_strip_charge_map;
-    the_strip_charge_map = theRDHitChargeConverter->processHit(input[i]);
+    std::map<unsigned short, double> the_pixel_charge_map;
+    the_pixel_charge_map = theRDimHitChargeConverter->processHit(input[i]);
   }
 }
