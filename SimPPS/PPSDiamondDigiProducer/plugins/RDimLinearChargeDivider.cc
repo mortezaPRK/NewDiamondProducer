@@ -12,6 +12,16 @@ RDimLinearChargeDivider::RDimLinearChargeDivider(const edm::ParameterSet& params
 
 RDimLinearChargeDivider::~RDimLinearChargeDivider() {}
 
+// 
+// This is used for distribting a hint energy to each segment of detector
+// 
+// we are assuming enegry is distrubted evenly in every segment
+//
+//
+// returns a vector of <energy,postion> combinition
+//
+// TODO: use vector<energy, position> instead for return value 
+//      same as SimPPS.PPSPixelDigiProducer.RPixEnergyDepositUnit
 simromanpot::energy_path_distribution RDimLinearChargeDivider::divide(const PSimHit& hit) {
   LocalVector direction = hit.exitPoint() - hit.entryPoint();
   // NOTE: What's our constraints for proccessing Hit

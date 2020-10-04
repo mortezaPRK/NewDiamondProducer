@@ -4,9 +4,9 @@
 // -*- C++ -*-
 //
 // Package:    PPSDiamondDigiProducer
-// Class:      CTPPSDiamondDigiProducer
+// Class:      DiamondDigiProducer
 //
-/**\class CTPPSDiamondDigiProducer PPSDiamondDigiProducer.cc SimPPS/PPSDiamondDigiProducer/plugins/PPSDiamondDigiProducer.cc
+/**\class DiamondDigiProducer PPSDiamondDigiProducer.cc SimPPS/PPSDiamondDigiProducer/plugins/PPSDiamondDigiProducer.cc
 
  Description: Base Producer for Diamond Det
 
@@ -65,10 +65,10 @@ namespace CLHEP {
   class HepRandomEngine;
 }
 
-class CTPPSDiamondDigiProducer : public edm::stream::EDProducer<> {
+class DiamondDigiProducer : public edm::stream::EDProducer<> {
 public:
-  explicit CTPPSDiamondDigiProducer(const edm::ParameterSet&);
-  ~CTPPSDiamondDigiProducer() override;
+  explicit DiamondDigiProducer(const edm::ParameterSet&);
+  ~DiamondDigiProducer() override;
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
 private:
@@ -83,14 +83,14 @@ private:
   int verbosity_;
 };
 
-CTPPSDiamondDigiProducer::CTPPSDiamondDigiProducer(const edm::ParameterSet& conf) : conf_(conf) {}
+DiamondDigiProducer::DiamondDigiProducer(const edm::ParameterSet& conf) : conf_(conf) {}
 
-CTPPSDiamondDigiProducer::~CTPPSDiamondDigiProducer() {}
+DiamondDigiProducer::~DiamondDigiProducer() {}
 
-void CTPPSDiamondDigiProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {}
+void DiamondDigiProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {}
 
-void CTPPSDiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {}
+void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {}
 
-DEFINE_FWK_MODULE(CTPPSDiamondDigiProducer);
+DEFINE_FWK_MODULE(DiamondDigiProducer);
 
 #endif

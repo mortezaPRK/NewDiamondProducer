@@ -12,7 +12,9 @@ RDimLinearChargeCollectionDrifter::RDimLinearChargeCollectionDrifter(const edm::
   det_id_ = det_id;
 }
 
-// TODO: add description
+// Converts a vector<energy, position> to vector<num_of_electons, 2d position, depth>
+//
+// getSigma is not implemented yet
 std::vector<RPixSignalPoint> RDimLinearChargeCollectionDrifter::Drift(
     const std::vector<RPixEnergyDepositUnit> &energy_deposition) {
   // convert an energy deposit in a point and in a charge of electrons n=E/3.61 (eV)
