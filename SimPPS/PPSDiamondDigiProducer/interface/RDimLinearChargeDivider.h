@@ -27,15 +27,16 @@ private:
   double thickness_;
 
   std::vector<RDimEnergyDepositUnit> the_energy_path_distribution_;
-  SiG4UniversalFluctuation* fluctuate;
+  // SiG4UniversalFluctuation* fluctuate;
   int verbosity_;
+  int chargedivisions_;
 
-  void FluctuateEloss(int pid,
-                      double particleMomentum,
-                      double eloss,
-                      double length,
-                      int NumberOfSegs,
-                      std::vector<RDimEnergyDepositUnit>& elossVector);
+  // void FluctuateEloss(int pid,
+  //                     double particleMomentum,
+  //                     double eloss,
+  //                     double length,
+  //                     int NumberOfSegs,
+  //                     std::vector<RDimEnergyDepositUnit>& elossVector);
 };
 
 #endif

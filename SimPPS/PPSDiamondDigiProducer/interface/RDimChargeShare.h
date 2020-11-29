@@ -14,7 +14,7 @@ public:
 private:
   uint32_t det_id_;
   std::vector<double> signalCoupling_;
-  // CTPPSPixelSimTopology theRPixDetTopology_;
+  CTPPSDiamondTopology theRPDiamondDetTopology_;
   // CTPPSPixelIndices pxlInd;
   // const int pxlRowSize_ = pxlInd.getDefaultRowDetSize();
   // const int pxlColSize_ = pxlInd.getDefaultColDetSize();
