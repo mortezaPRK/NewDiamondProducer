@@ -23,8 +23,8 @@ RDimLinearChargeDivider::~RDimLinearChargeDivider() {}
 //
 // TODO: use vector<energy, position> instead for return value 
 //      same as SimPPS.PPSPixelDigiProducer.RPixEnergyDepositUnit
-simromanpot::energy_path_distribution RDimLinearChargeDivider::divide(const PSimHit& hit) {
-  LocalVector direction = hit.exitPoint() - hit.entryPoint();\
+std::vector<RPixEnergyDepositUnit> RDimLinearChargeDivider::divide(const PSimHit& hit) {
+  LocalVector direction = hit.exitPoint() - hit.entryPoint();
   // TODO: use pixel's divider
   // NOTE: What's our constraints for proccessing Hit
   // if (direction.z() > 10 || direction.x() > 200 || direction.y() > 200) {
