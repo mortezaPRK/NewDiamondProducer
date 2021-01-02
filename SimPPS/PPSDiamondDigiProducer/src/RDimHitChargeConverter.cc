@@ -2,7 +2,7 @@
 #include "DataFormats/GeometryVector/interface/LocalPoint.h"
 #include "SimPPS/PPSDiamondDigiProducer/interface/RDimLinearChargeDivider.h"
 #include "SimPPS/PPSDiamondDigiProducer/interface/RDimHitChargeConverter.h"
-
+#include "SimPPS/PPSDiamondDigiProducer/interface/RDimChargeShare.h"
 
 RDimHitChargeConverter::RDimHitChargeConverter(const edm::ParameterSet &params,
                                                CLHEP::HepRandomEngine &eng,
@@ -10,14 +10,13 @@ RDimHitChargeConverter::RDimHitChargeConverter(const edm::ParameterSet &params,
     : det_id_(det_id) {
   verbosity_ = params.getParameter<int>("RDimVerbosity");
   theRDimChargeDivider = std::make_unique<RDimLinearChargeDivider>(params, eng, det_id);
-  // theRDimChargeCollectionDrifter = std::make_unique<RDimLinearChargeCollectionDrifter>(params, det_id);
-  // theRDimChargeShare = std::make_unique<RDimChargeShare>(params, det_id);
+  theRDimChargeCollectionDrifter = std::make_unique<RDimLinearChargeCollectionDrifter>(params, det_id);
+  theRDimChargeShare = std::make_unique<RDimChargeShare>(params, det_id);
 }
 
-
 //
-// Converts a hit to number of inducted electrons in the specified pixel
-// 
+// Converts a hit to number of inducted electrons in the specified part
+//
 std::map<unsigned short, double> RDimHitChargeConverter::processHit(const PSimHit &hit) {
   std::vector<RDimEnergyDepositUnit> ions_along_path = theRDimChargeDivider->divide(hit);
   if (verbosity_)

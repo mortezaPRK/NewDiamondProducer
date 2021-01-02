@@ -4,6 +4,8 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "SimDataFormats/TrackingHit/interface/PSimHit.h"
 #include "SimPPS/PPSDiamondDigiProducer/interface/RDimLinearChargeDivider.h"
+#include "SimPPS/PPSDiamondDigiProducer/interface/RDimLinearChargeCollectionDrifter.h"
+#include "SimPPS/PPSDiamondDigiProducer/interface/RDimChargeShare.h"
 // #include "SimPPS/PPSDiamondDigiProducer/interface/RPSimTypes.h"
 
 #include <map>
@@ -18,6 +20,8 @@ public:
 private:
   const uint32_t det_id_;
   std::unique_ptr<RDimLinearChargeDivider> theRDimChargeDivider;
+  std::unique_ptr<RDimLinearChargeCollectionDrifter> theRDimChargeCollectionDrifter;
+  std::unique_ptr<RDimChargeShare> theRDimChargeShare;
   int verbosity_;
 };
 

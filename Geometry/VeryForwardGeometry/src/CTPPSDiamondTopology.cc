@@ -19,7 +19,7 @@ CTPPSDiamondTopology::PartInfo CTPPSDiamondTopology::getPartInvolved(
   double lower_y, higher_y;
   double current = sensor_outer_edge_;
   for (unsigned int index = 0; index < sizeof(y_each_width_); index = index + 1) {
-    current += y_each_width_[index]; 
+    current += y_each_width_[index];
     if (y < current) {
       sensorIndex = index + 1;
       lower_y = current - y_each_width_[index];
@@ -30,7 +30,7 @@ CTPPSDiamondTopology::PartInfo CTPPSDiamondTopology::getPartInvolved(
   }
 
   if (sensorIndex == 0) {
-      throw cms::Exception("CTPPSDiamondTopology") << "out of sensors!";
+    throw cms::Exception("CTPPSDiamondTopology") << "out of sensors!";
   }
 
   lower_y -= yWidth() / 2.;
