@@ -29,7 +29,6 @@ private:
   std::vector<RDimEnergyDepositUnit> the_energy_path_distribution_;
   // SiG4UniversalFluctuation* fluctuate;
   int verbosity_;
-  int chargedivisions_;
 
   // void FluctuateEloss(int pid,
   //                     double particleMomentum,

@@ -21,7 +21,7 @@ void DiamondDetDigitizer::run(const std::vector<PSimHit> &input,
                               std::vector<std::vector<std::pair<int, double> > > &output_digi_links) {
   int input_size = input.size();
   for (int i = 0; i < input_size; ++i) {
-    std::map<unsigned short, double> the_pixel_charge_map;
-    the_pixel_charge_map = theRDimHitChargeConverter->processHit(input[i]);
+    std::map<unsigned short, double> the_diamond_charge_map;
+    the_diamond_charge_map = theRDimHitChargeConverter->processHit(input[i]);
   }
 }

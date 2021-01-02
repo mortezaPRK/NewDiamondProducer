@@ -1,22 +1,22 @@
-#include "SimPPS/PPSPixelDigiProducer/interface/RDimLinearChargeCollectionDrifter.h"
-#include "Geometry/VeryForwardGeometry/interface/CTPPSPixelTopology.h"
+#include "SimPPS/PPSDiamondDigiProducer/interface/RDimLinearChargeCollectionDrifter.h"
+#include "Geometry/VeryForwardGeometry/interface/CTPPSDiamondTopology.h"
 #include <iostream>
 #include <vector>
 
 RDimLinearChargeCollectionDrifter::RDimLinearChargeCollectionDrifter(const edm::ParameterSet &params, uint32_t det_id) {
-  verbosity_ = params.getParameter<int>("RPixVerbosity");
+  verbosity_ = params.getParameter<int>("RDimVerbosity");
 
-  GeV_per_electron_ = params.getParameter<double>("RPixGeVPerElectron");
-  charge_cloud_sigmas_vect_ = params.getParameter<std::vector<double> >("RPixInterSmearing");
-  det_thickness_ = CTPPSPixelTopology().detThickness();
+  GeV_per_electron_ = params.getParameter<double>("RDimGeVPerElectron");
+  charge_cloud_sigmas_vect_ = params.getParameter<std::vector<double> >("RDimInterSmearing");
+  det_thickness_ = CTPPSDiamondTopology().detThickness();
   det_id_ = det_id;
 }
 
 // Converts a vector<energy, position> to vector<num_of_electons, 2d position, depth>
 //
 // getSigma is not implemented yet
-std::vector<RPixSignalPoint> RDimLinearChargeCollectionDrifter::Drift(
-    const std::vector<RPixEnergyDepositUnit> &energy_deposition) {
+std::vector<RDimSignalPoint> RDimLinearChargeCollectionDrifter::Drift(
+    const std::vector<RDimEnergyDepositUnit> &energy_deposition) {
   // convert an energy deposit in a point and in a charge of electrons n=E/3.61 (eV)
   temp_.resize(energy_deposition.size());
   for (unsigned int i = 0; i < energy_deposition.size(); i++) {
