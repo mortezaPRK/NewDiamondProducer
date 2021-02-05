@@ -13,7 +13,7 @@
 class RDimHitChargeConverter {
 public:
   RDimHitChargeConverter(const edm::ParameterSet &params_, CLHEP::HepRandomEngine &eng, uint32_t det_id);
-  ~RDimHitChargeConverter();
+  ~RDimHitChargeConverter() = default;
 
   std::map<unsigned short, double> processHit(const PSimHit &hit);
 

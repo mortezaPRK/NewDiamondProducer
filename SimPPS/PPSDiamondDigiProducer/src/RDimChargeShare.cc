@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 
-RDimChargeShare::RDimChargeShare(const edm::ParameterSet &params, uint32_t det_id) : det_id_(det_id) {
+RDimChargeShare::RDimChargeShare(const edm::ParameterSet &params, uint32_t det_id) : det_id_(det_id), theRPDiamondDetTopology_() {
   // TODO: read from config file
 }
 

@@ -37,6 +37,7 @@
 
 //  ****  CTPPS
 #include "DataFormats/CTPPSDigi/interface/CTPPSDiamondDigi.h"
+#include "Geometry/VeryForwardGeometry/interface/CTPPSDiamondTopology.h"
 
 #include "SimDataFormats/CrossingFrame/interface/MixCollection.h"
 

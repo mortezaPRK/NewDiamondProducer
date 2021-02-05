@@ -24,7 +24,7 @@ CTPPSDiamondTopology::PartInfo CTPPSDiamondTopology::getPartInvolved(
       sensorIndex = index + 1;
       lower_y = current - y_each_width_[index];
       higher_y = current;
-      break
+      break;
     }
     current += sensor_inner_edge_;
   }

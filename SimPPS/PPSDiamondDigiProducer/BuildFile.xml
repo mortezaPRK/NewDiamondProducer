@@ -1,4 +1,5 @@
 <use   name="SimTracker/Common"/>
+<use   name="Geometry/VeryForwardGeometry"/>
 <export>
   <lib name="1"/>
 </export>

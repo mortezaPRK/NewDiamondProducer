@@ -6,6 +6,9 @@
 
 class CTPPSDiamondTopology {
 public:
+  CTPPSDiamondTopology();
+  ~CTPPSDiamondTopology() = default;
+public:
   // CTPPSDiamondIndices indices_;
 
   //     ________
@@ -49,8 +52,6 @@ public:
   };
 
 public:
-  CTPPSDiamondTopology() = default;
-  ~CTPPSDiamondTopology() = default;
 
   static constexpr double active_edge_sigma_ = 0.02;
   static constexpr double thickness_ = 0.23;
