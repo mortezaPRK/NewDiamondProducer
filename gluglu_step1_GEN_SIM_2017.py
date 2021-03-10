@@ -48,7 +48,7 @@ process.common_maximum_timex = cms.PSet( # need to be localy redefined
 )
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(200)
 )
 
 # Input source

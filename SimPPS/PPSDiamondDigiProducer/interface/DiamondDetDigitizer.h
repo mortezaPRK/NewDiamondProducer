@@ -8,6 +8,8 @@
 #include "SimTracker/Common/interface/SiG4UniversalFluctuation.h"
 #include "SimGeneral/NoiseGenerators/interface/GaussianTailNoiseGenerator.h"
 #include "SimPPS/PPSDiamondDigiProducer/interface/RDimHitChargeConverter.h"
+#include "SimPPS/PPSDiamondDigiProducer/interface/RDimPileUpSignals.h"
+#include "SimPPS/PPSDiamondDigiProducer/interface/RDimDummyROCSimulator.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
@@ -36,6 +38,9 @@ public:
 private:
   uint32_t det_id_;
   std::unique_ptr<RDimHitChargeConverter> theRDimHitChargeConverter;
+
+  std::unique_ptr<RDimPileUpSignals> theRDimPileUpSignals;
+  std::unique_ptr<RDimDummyROCSimulator> theRDimDummyROCSimulator;
   int verbosity_;
 };
 #endif

@@ -16,13 +16,13 @@ process.load('Configuration.EventContent.EventContent_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_cff')
-process.load('Configuration.StandardSequences.Digi_cff')
+process.load('Configuration.StandardSequences.Digi_cff') # <--
 process.load('Configuration.StandardSequences.SimL1Emulator_cff')
-process.load('Configuration.StandardSequences.DigiToRaw_cff')
+process.load('Configuration.StandardSequences.DigiToRaw_cff') # <--
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-process.load("Geometry.VeryForwardGeometry.geometryPPS_CMSxz_fromDD_2017_cfi")
-process.load('CalibPPS.ESProducers.CTPPSPixelDAQMappingESSourceXML_cfi')
+process.load("Geometry.VeryForwardGeometry.geometryPPS_CMSxz_fromDD_2017_cfi") # <--
+process.load('CalibPPS.ESProducers.CTPPSPixelDAQMappingESSourceXML_cfi') # <--
 
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(-1)
@@ -32,7 +32,7 @@ process.load("IOMC.RandomEngine.IOMC_cff")
 process.RandomNumberGeneratorService.generator.initialSeed = 456789
 process.RandomNumberGeneratorService.g4SimHits.initialSeed = 9876
 process.RandomNumberGeneratorService.VtxSmeared.initialSeed = 123456789
-
+ # <--
 
 # Input source
 process.source = cms.Source("PoolSource",
@@ -53,12 +53,20 @@ process.configurationMetadata = cms.untracked.PSet(
 
 process.FEVTDEBUGHLToutput = cms.OutputModule("PoolOutputModule",
     dataset = cms.untracked.PSet(
-        dataTier = cms.untracked.string('GEN-SIM-DIGI-RAW'),
+        dataTier = cms.untracked.string('GEN-SIM-DIGI-RAW'), # <--
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
     fileName = cms.untracked.string('GluGlu_DIGI_DIGI2RAW_2017.root'),
-    outputCommands = process.FEVTDEBUGHLTEventContent.outputCommands+['keep *_ctpps*_*_*',"keep *_*RP*_*_*",'keep *_LHCTransport_*_*'],
+    outputCommands = process.FEVTDEBUGHLTEventContent.outputCommands+[
+        # 'keep *pps*'
+        'keep *_ctpps*_*_*',
+        'keep *_cpps*_*_*',
+        'keep *_pps*_*_*',
+        "keep *_*RP*_*_*", 
+        'keep *_*RD*_*_*', 
+        'keep *_LHCTransport_*_*'
+    ], # <--
     splitLevel = cms.untracked.int32(0)
 )
 
@@ -68,42 +76,42 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2017_realistic', '')
 process.GlobalTag.toGet = cms.VPSet(
     cms.PSet(
-        record = cms.string('CTPPSPixelGainCalibrationsRcd'),
-        tag = cms.string("CTPPSPixelGainCalibrations_mc"),
-        connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS')
+        record = cms.string('CTPPSPixelGainCalibrationsRcd'), # <--
+        tag = cms.string("CTPPSPixelGainCalibrations_mc"), # <--
+        connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS') # <--
         ),
     cms.PSet(
-        record = cms.string('CTPPSPixelAnalysisMaskRcd'),
-        tag = cms.string("CTPPSPixelAnalysisMask_mc"),
+        record = cms.string('CTPPSPixelAnalysisMaskRcd'), # <--
+        tag = cms.string("CTPPSPixelAnalysisMask_mc"), # <--
         label = cms.untracked.string(""),
-        connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS')
+        connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS') # <--
         ),
     cms.PSet(
-        record = cms.string('CTPPSPixelDAQMappingRcd'),
-        tag = cms.string("CTPPSPixelDAQMapping_mc"),
-        connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS')
+        record = cms.string('CTPPSPixelDAQMappingRcd'),  # <--
+        tag = cms.string("CTPPSPixelDAQMapping_mc"),  # <--
+        connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS')  # <--
         )
 )
 
-process.load("CalibPPS.ESProducers.totemDAQMappingESSourceXML_cfi")
+process.load("CalibPPS.ESProducers.totemDAQMappingESSourceXML_cfi") # <--
 process.totemDAQMappingESSourceXML.configuration = cms.VPSet(
     cms.PSet(
       validityRange = cms.EventRange("1:min - 999999999:max"),
-      mappingFileNames = cms.vstring("CondFormats/CTPPSReadoutObjects/xml/mapping_tracking_strip_2017.xml"),
+      mappingFileNames = cms.vstring("CondFormats/CTPPSReadoutObjects/xml/mapping_tracking_strip_2017.xml"), # <--
       maskFileNames = cms.vstring()
     )
 )
 
 
 # Path and EndPath definitions
-process.digitisation_step = cms.Path(process.pdigi)
-process.L1simulation_step = cms.Path(process.SimL1Emulator)
-process.digi2raw_step = cms.Path(process.DigiToRaw)
+process.digitisation_step = cms.Path(process.pdigi) # <--
+process.L1simulation_step = cms.Path(process.SimL1Emulator)  # <--
+process.digi2raw_step = cms.Path(process.DigiToRaw) # <--
 process.endjob_step = cms.EndPath(process.endOfProcess)
 process.FEVTDEBUGHLToutput_step = cms.EndPath(process.FEVTDEBUGHLToutput)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.digitisation_step,process.L1simulation_step,process.digi2raw_step)
+process.schedule = cms.Schedule(process.digitisation_step,process.L1simulation_step,process.digi2raw_step)  # <--
 process.schedule.extend([process.endjob_step,process.FEVTDEBUGHLToutput_step])
 from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
-associatePatAlgosToolsTask(process)
+associatePatAlgosToolsTask(process) # <--
