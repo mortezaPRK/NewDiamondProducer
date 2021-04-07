@@ -1,5 +1,7 @@
 #include "SimPPS/PPSDiamondDigiProducer/interface/RDimDummyROCSimulator.h"
 #include "Geometry/VeryForwardGeometry/interface/CTPPSDiamondTopology.h"
+
+#include "DataFormats/CTPPSDigi/interface/CTPPSDiamondDigi.h"
 #include <vector>
 #include "TRandom.h"
 #include <iostream>
@@ -32,7 +34,7 @@ void RDimDummyROCSimulator::ConvertChargeToHits(
       if (adc < 0)
         adc = 0;
         
-      output_digi.push_back(CTPPSDiamondDigi());
+      // output_digi.push_back(CTPPSDiamondDigi(0,0,0, true, 0));
     }
   }
 }

@@ -7,11 +7,18 @@ import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
 process = cms.Process('DIGI2RAW',eras.Run2_2017, eras.ctpps_2017)
+process.load('FWCore.MessageService.MessageLogger_cfi')
+# process.MessageLogger.destinations = ['cout', 'cerr']
+process.MessageLogger.threshold = cms.untracked.string('INFO')
+process.MessageLogger.cout.threshold = cms.untracked.string('INFO')
+process.MessageLogger.debugModules = cms.untracked.vstring("*")
+process.MessageLogger.destinations = cms.untracked.vstring('cout')
+process.MessageLogger.cout = cms.untracked.PSet( threshold = cms.untracked.string('INFO'))
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
-process.load('FWCore.MessageService.MessageLogger_cfi')
+# process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
@@ -22,17 +29,18 @@ process.load('Configuration.StandardSequences.DigiToRaw_cff') # <--
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load("Geometry.VeryForwardGeometry.geometryPPS_CMSxz_fromDD_2017_cfi") # <--
-process.load('CalibPPS.ESProducers.CTPPSPixelDAQMappingESSourceXML_cfi') # <--
+# process.load('CalibPPS.ESProducers.CTPPSPixelDAQMappingESSourceXML_cfi') # <--
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+    input = cms.untracked.int32(1)
 )
 
 process.load("IOMC.RandomEngine.IOMC_cff")
 process.RandomNumberGeneratorService.generator.initialSeed = 456789
 process.RandomNumberGeneratorService.g4SimHits.initialSeed = 9876
 process.RandomNumberGeneratorService.VtxSmeared.initialSeed = 123456789
- # <--
+process.RandomNumberGeneratorService.RPixDetDigitizer = cms.PSet(initialSeed =cms.untracked.uint32(137137))
+
 
 # Input source
 process.source = cms.Source("PoolSource",
@@ -74,24 +82,24 @@ process.FEVTDEBUGHLToutput = cms.OutputModule("PoolOutputModule",
     
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2017_realistic', '')
-process.GlobalTag.toGet = cms.VPSet(
-    cms.PSet(
-        record = cms.string('CTPPSPixelGainCalibrationsRcd'), # <--
-        tag = cms.string("CTPPSPixelGainCalibrations_mc"), # <--
-        connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS') # <--
-        ),
-    cms.PSet(
-        record = cms.string('CTPPSPixelAnalysisMaskRcd'), # <--
-        tag = cms.string("CTPPSPixelAnalysisMask_mc"), # <--
-        label = cms.untracked.string(""),
-        connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS') # <--
-        ),
-    cms.PSet(
-        record = cms.string('CTPPSPixelDAQMappingRcd'),  # <--
-        tag = cms.string("CTPPSPixelDAQMapping_mc"),  # <--
-        connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS')  # <--
-        )
-)
+# process.GlobalTag.toGet = cms.VPSet(
+#     cms.PSet(
+#         record = cms.string('CTPPSPixelGainCalibrationsRcd'), # <--
+#         tag = cms.string("CTPPSPixelGainCalibrations_mc"), # <--
+#         connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS') # <--
+#         ),
+#     cms.PSet(
+#         record = cms.string('CTPPSPixelAnalysisMaskRcd'), # <--
+#         tag = cms.string("CTPPSPixelAnalysisMask_mc"), # <--
+#         label = cms.untracked.string(""),
+#         connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS') # <--
+#         ),
+#     cms.PSet(
+#         record = cms.string('CTPPSPixelDAQMappingRcd'),  # <--
+#         tag = cms.string("CTPPSPixelDAQMapping_mc"),  # <--
+#         connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS')  # <--
+#         )
+# )
 
 process.load("CalibPPS.ESProducers.totemDAQMappingESSourceXML_cfi") # <--
 process.totemDAQMappingESSourceXML.configuration = cms.VPSet(
@@ -101,8 +109,9 @@ process.totemDAQMappingESSourceXML.configuration = cms.VPSet(
       maskFileNames = cms.vstring()
     )
 )
-
-
+process.content = cms.EDAnalyzer("EventContentAnalyzer")
+process.Tracer = cms.Service("Tracer")
+# process.de = cms.Path(process.Tracer)
 # Path and EndPath definitions
 process.digitisation_step = cms.Path(process.pdigi) # <--
 process.L1simulation_step = cms.Path(process.SimL1Emulator)  # <--

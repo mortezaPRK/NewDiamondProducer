@@ -33,8 +33,8 @@ from SimGeneral.Configuration.SimGeneral_cff import *
 # add updating the GEN information by default
 from Configuration.StandardSequences.Generator_cff import *
 from GeneratorInterface.Core.generatorSmeared_cfi import *
-
-doAllDigiTask = cms.Task(generatorSmeared, calDigiTask, muonDigiTask, ctppsDigiTask)
+# print(ctppsDiamondDigiTask)
+doAllDigiTask = cms.Task(generatorSmeared, calDigiTask, muonDigiTask, ctppsDiamondDigiTask)
 from Configuration.ProcessModifiers.premix_stage2_cff import premix_stage2
 # premixing stage2 runs muon digis after PreMixingModule (configured in DataMixerPreMix_cff)
 premix_stage2.toReplaceWith(doAllDigiTask, doAllDigiTask.copyAndExclude([muonDigiTask]))

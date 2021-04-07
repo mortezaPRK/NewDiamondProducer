@@ -83,7 +83,7 @@ private:
   edm::ParameterSet conf_;
 
   CLHEP::HepRandomEngine* rndEngine_ = nullptr;
-  edm::EDGetTokenT<CrossingFrame<PSimHit>> tokenCrossingFramePPSDiamond;
+  edm::EDGetTokenT<std::vector<PSimHit>> tokenCrossingFramePPSDiamond;
 
   int verbosity_;
 };
@@ -92,7 +92,7 @@ DiamondDigiProducer::DiamondDigiProducer(const edm::ParameterSet& conf) : conf_(
   produces<edm::DetSetVector<CTPPSDiamondDigi>>();
 
   // register data to consume
-  tokenCrossingFramePPSDiamond = consumes<CrossingFrame<PSimHit>>(edm::InputTag("g4SimHitsCTPPSTimingHits"));
+  tokenCrossingFramePPSDiamond = consumes<std::vector<PSimHit>>(edm::InputTag("g4SimHitsCTPPSTimingHits"));
   verbosity_ = conf.getParameter<int>("RDimVerbosity");
   std::cout << "here at: " << __FUNCTION__ << '\n';
 }
@@ -126,20 +126,20 @@ void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSe
   // theGainCalibrationDB.getDB(iEvent, iSetup);
 
   // Step A: Get Inputs
-  edm::Handle<CrossingFrame<PSimHit>> cf;
+  edm::Handle<PSimHit> cf;
 
   iEvent.getByToken(tokenCrossingFramePPSDiamond, cf);
 
-  MixCollection<PSimHit> allRDimHits{cf.product(), std::pair(0, 0)};
+  // MixCollection<PSimHit> allRDimHits{cf.product(), std::pair(0, 0)};
 
   //Loop on PSimHit
   simhit_map SimHitMap;
   SimHitMap.clear();
 
   MixCollection<PSimHit>::iterator isim;
-  for (isim = allRDimHits.begin(); isim != allRDimHits.end(); ++isim) {
-    SimHitMap[(*isim).detUnitId()].push_back((*isim));
-  }
+  // for (isim = allRDimHits.begin(); isim != allRDimHits.end(); ++isim) {
+  //   SimHitMap[(*isim).detUnitId()].push_back((*isim));
+  // }
 
   // Step B: LOOP on hits in event
   std::vector<edm::DetSet<CTPPSDiamondDigi>> theDigiVector;
