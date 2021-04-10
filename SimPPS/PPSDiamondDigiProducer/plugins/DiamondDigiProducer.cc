@@ -1,5 +1,5 @@
-#ifndef SimPPS_PPSDiamondDigiProducer_PPSDiamondDigiProducer_h
-#define SimPPS_PPSDiamondDigiProducer_PPSDiamondDigiProducer_h
+#ifndef SimPPS_PPSDiamondDigiProducers_PPSDiamondDigiProducer_h
+#define SimPPS_PPSDiamondDigiProducers_PPSDiamondDigiProducer_h
 
 // -*- C++ -*-
 //
@@ -75,6 +75,8 @@ public:
 
 private:
   void produce(edm::Event&, const edm::EventSetup&) override;
+  virtual void beginStream(edm::StreamID) override;
+  virtual void endStream() override;
 
   typedef std::map<unsigned int, std::vector<PSimHit>> simhit_map;
   typedef simhit_map::iterator simhit_map_iterator;
@@ -88,11 +90,22 @@ private:
   int verbosity_;
 };
 
+void DiamondDigiProducer::beginStream(edm::StreamID) {
+  std::cout << "here at call bs";
+}
+
+// ------------ method called once each stream after processing all runs, lumis and events  ------------
+void DiamondDigiProducer::endStream() {
+  std::cout << "here at end bs";
+}
+
 DiamondDigiProducer::DiamondDigiProducer(const edm::ParameterSet& conf) : conf_(conf) {
   produces<edm::DetSetVector<CTPPSDiamondDigi>>();
 
   // register data to consume
-  tokenCrossingFramePPSDiamond = consumes<std::vector<PSimHit>>(edm::InputTag("g4SimHitsCTPPSTimingHits"));
+  // tokenCrossingFramePPSDiamond = consumes<std::vector<PSimHit>>(edm::InputTag("g4SimHitsCTPPSTimingHits"));
+  
+  // consumes<edm::DetSetVector<CTPPSDiamondDigi>>(edm::InputTag("g4SimHitsCTPPSTimingHits"));
   verbosity_ = conf.getParameter<int>("RDimVerbosity");
   std::cout << "here at: " << __FUNCTION__ << '\n';
 }
@@ -110,6 +123,7 @@ void DiamondDigiProducer::fillDescriptions(edm::ConfigurationDescriptions& descr
 
 void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   std::cout << "here at: " << __FUNCTION__ << '\n';
+  throw std::invalid_argument( "received negative value" );
   using namespace edm;
   if (!rndEngine_) {
     Service<RandomNumberGenerator> rng;
