@@ -106,6 +106,21 @@ DiamondDigiProducer::DiamondDigiProducer(const edm::ParameterSet& conf) : conf_(
   // tokenCrossingFramePPSDiamond = consumes<std::vector<PSimHit>>(edm::InputTag("g4SimHitsCTPPSTimingHits"));
   
   // consumes<edm::DetSetVector<CTPPSDiamondDigi>>(edm::InputTag("g4SimHitsCTPPSTimingHits"));
+  // consumes<std::vector<PSimHit>>(edm::InputTag("g4SimHitsCTPPSTimingHits"));
+  // consumes<edm::PSimHitContainer>(edm::InputTag("g4SimHitsCTPPSTimingHits"));
+
+  // consumes<edm::DetSetVector<CTPPSDiamondDigi>>(edm::InputTag("CTPPSTimingHits"));
+  // consumes<std::vector<PSimHit>>(edm::InputTag("CTPPSTimingHits"));
+  // consumes<edm::PSimHitContainer>(edm::InputTag("CTPPSTimingHits"));
+
+  // consumes<edm::DetSetVector<CTPPSDiamondDigi>>(edm::InputTag("g4SimHits","CTPPSTimingHits"));
+  // consumes<std::vector<PSimHit>>(edm::InputTag("g4SimHits","CTPPSTimingHits"));
+  // consumes<edm::PSimHitContainer>(edm::InputTag("g4SimHits","CTPPSTimingHits"));
+
+  // consumes<edm::DetSetVector<CTPPSDiamondDigi>>(edm::InputTag("g4SimHits","CTPPSHits"));
+  // consumes<std::vector<PSimHit>>(edm::InputTag("g4SimHits","CTPPSHits"));
+  // consumes<edm::PSimHitContainer>(edm::InputTag("g4SimHits","CTPPSHits"));
+  
   verbosity_ = conf.getParameter<int>("RDimVerbosity");
   std::cout << "here at: " << __FUNCTION__ << '\n';
 }
