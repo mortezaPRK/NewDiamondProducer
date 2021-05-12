@@ -35,14 +35,10 @@
 #include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
 #include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
 
-//  ****  CTPPS
-#include "DataFormats/CTPPSDigi/interface/CTPPSDiamondDigi.h"
-#include "Geometry/VeryForwardGeometry/interface/CTPPSDiamondTopology.h"
-#include "SimPPS/PPSDiamondDigiProducer/interface/DiamondDetDigitizer.h"
-
 #include "SimDataFormats/CrossingFrame/interface/MixCollection.h"
 
 #include "DataFormats/Common/interface/DetSet.h"
+#include "DataFormats/CTPPSDigi/interface/CTPPSDiamondDigi.h"
 
 // user include files
 #include "SimDataFormats/TrackingHit/interface/PSimHitContainer.h"
@@ -80,7 +76,7 @@ private:
 
   typedef std::map<unsigned int, std::vector<PSimHit>> simhit_map;
   typedef simhit_map::iterator simhit_map_iterator;
-  std::map<uint32_t, std::unique_ptr<DiamondDetDigitizer>> theAlgoMap;
+  // std::map<uint32_t, std::unique_ptr<DiamondDetDigitizer>> theAlgoMap;
 
   edm::ParameterSet conf_;
 
@@ -100,7 +96,7 @@ void DiamondDigiProducer::endStream() {
 }
 
 DiamondDigiProducer::DiamondDigiProducer(const edm::ParameterSet& conf) : conf_(conf) {
-  produces<edm::DetSetVector<CTPPSDiamondDigi>>();
+  // produces<edm::DetSetVector<CTPPSDiamondDigi>>();
 
   // register data to consume
   // tokenCrossingFramePPSDiamond = consumes<std::vector<PSimHit>>(edm::InputTag("g4SimHitsCTPPSTimingHits"));
@@ -115,7 +111,7 @@ DiamondDigiProducer::DiamondDigiProducer(const edm::ParameterSet& conf) : conf_(
 
   // consumes<edm::DetSetVector<CTPPSDiamondDigi>>(edm::InputTag("g4SimHits","CTPPSTimingHits"));
   // consumes<std::vector<PSimHit>>(edm::InputTag("g4SimHits","CTPPSTimingHits"));
-  // consumes<edm::PSimHitContainer>(edm::InputTag("g4SimHits","CTPPSTimingHits"));
+  consumes<edm::PSimHitContainer>(edm::InputTag("g4SimHits","CTPPSTimingHits"));
 
   // consumes<edm::DetSetVector<CTPPSDiamondDigi>>(edm::InputTag("g4SimHits","CTPPSHits"));
   // consumes<std::vector<PSimHit>>(edm::InputTag("g4SimHits","CTPPSHits"));
@@ -139,64 +135,6 @@ void DiamondDigiProducer::fillDescriptions(edm::ConfigurationDescriptions& descr
 void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   std::cout << "here at: " << __FUNCTION__ << '\n';
   throw std::invalid_argument( "received negative value" );
-  using namespace edm;
-  if (!rndEngine_) {
-    Service<RandomNumberGenerator> rng;
-    if (!rng.isAvailable()) {
-      throw cms::Exception("Configuration")
-          << "This class requires the RandomNumberGeneratorService\n"
-             "which is not present in the configuration file.  You must add the service\n"
-             "in the configuration file or remove the modules that require it.";
-    }
-    rndEngine_ = &(rng->getEngine(iEvent.streamID()));
-  }
-
-  // get calibration DB
-  // theGainCalibrationDB.getDB(iEvent, iSetup);
-
-  // Step A: Get Inputs
-  edm::Handle<PSimHit> cf;
-
-  iEvent.getByToken(tokenCrossingFramePPSDiamond, cf);
-
-  // MixCollection<PSimHit> allRDimHits{cf.product(), std::pair(0, 0)};
-
-  //Loop on PSimHit
-  simhit_map SimHitMap;
-  SimHitMap.clear();
-
-  MixCollection<PSimHit>::iterator isim;
-  // for (isim = allRDimHits.begin(); isim != allRDimHits.end(); ++isim) {
-  //   SimHitMap[(*isim).detUnitId()].push_back((*isim));
-  // }
-
-  // Step B: LOOP on hits in event
-  std::vector<edm::DetSet<CTPPSDiamondDigi>> theDigiVector;
-  theDigiVector.reserve(400);
-  theDigiVector.clear();
-
-  for (simhit_map_iterator it = SimHitMap.begin(); it != SimHitMap.end(); ++it) {
-    edm::DetSet<CTPPSDiamondDigi> digi_collector(it->first);
-
-    if (theAlgoMap.find(it->first) == theAlgoMap.end()) {
-      theAlgoMap[it->first] = std::unique_ptr<DiamondDetDigitizer>(
-          new DiamondDetDigitizer(conf_, *rndEngine_, it->first, iSetup));  //a digitizer for eny detector
-    }
-
-    std::vector<int> input_links;
-    std::vector<std::vector<std::pair<int, double>>> output_digi_links;  // links to simhits
-
-    (theAlgoMap.find(it->first)->second)->run(SimHitMap[it->first], input_links, digi_collector.data, output_digi_links);
-
-    if (!digi_collector.data.empty()) {
-      theDigiVector.push_back(digi_collector);
-    }
-  }
-
-  std::unique_ptr<edm::DetSetVector<CTPPSDiamondDigi>> digi_output(
-      new edm::DetSetVector<CTPPSDiamondDigi>(theDigiVector));
-
-  iEvent.put(std::move(digi_output));
 }
 
 DEFINE_FWK_MODULE(DiamondDigiProducer);
