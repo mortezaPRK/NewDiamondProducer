@@ -33,6 +33,13 @@ process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(1),
 )
 
+
+process.load("IOMC.RandomEngine.IOMC_cff")
+process.RandomNumberGeneratorService.generator.initialSeed = 456789
+process.RandomNumberGeneratorService.g4SimHits.initialSeed = 9876
+process.RandomNumberGeneratorService.VtxSmeared.initialSeed = 123456789
+process.RandomNumberGeneratorService.DiamondDetDigitizer = cms.PSet(initialSeed =cms.untracked.uint32(137137))
+
 # Input source
 process.source = cms.Source("PoolSource",
     dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
@@ -102,7 +109,9 @@ process.FEVTDEBUGoutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     fileName = cms.untracked.string('step2_DIGI.root'),
-    outputCommands = process.FEVTDEBUGEventContent.outputCommands,
+    outputCommands = process.FEVTDEBUGEventContent.outputCommands + [
+        "keep CTPPSDiamondDigiedmDetSetVector_*_*_*",
+    ],
     splitLevel = cms.untracked.int32(0)
 )
 
@@ -116,7 +125,8 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2017_realistic', '
 # process.Tracer = cms.Service("Tracer")
 # process.eca = cms.Path(process.content)
 # Path and EndPath definitions
-process.digitisation_step = cms.Path(process.mix*process.DiamondDetDigitizer)
+# process.digitisation_step = cms.Path(process.mix*process.DiamondDetDigitizer)
+process.digitisation_step = cms.Path(process.DiamondDetDigitizer)
 # process.digitisation_step = cms.Path(process.pdigi * process.content)
 # process.digitisation_step = cms.Path(process.pdigi)
 process.endjob_step = cms.EndPath(process.endOfProcess)

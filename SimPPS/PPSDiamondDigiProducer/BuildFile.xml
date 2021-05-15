@@ -1,5 +1,8 @@
 <use   name="SimTracker/Common"/>
 <use   name="Geometry/VeryForwardGeometry"/>
+<use   name="FWCore/ParameterSet"/>
+<use   name="DataFormats/CTPPSDigi"/>
+
 <export>
   <lib name="1"/>
 </export>
