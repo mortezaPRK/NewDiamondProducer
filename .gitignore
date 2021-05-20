@@ -1,2 +1,4 @@
 *.pyc
 *.root
+/.vscode
+/*.txt

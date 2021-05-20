@@ -36,6 +36,7 @@ public:
   ~DiamondDetDigitizer();
 
 private:
+  edm::ParameterSet conf_;
   uint32_t det_id_;
   std::unique_ptr<RDimHitChargeConverter> theRDimHitChargeConverter;
 

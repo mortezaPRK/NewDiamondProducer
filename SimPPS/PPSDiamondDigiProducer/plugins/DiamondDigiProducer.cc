@@ -1,5 +1,5 @@
-#ifndef SimPPS_PPSDiamondDigiProducer_PPSDiamondDigiProducer_h
-#define SimPPS_PPSDiamondDigiProducer_PPSDiamondDigiProducer_h
+#ifndef SimPPS_PPSDiamondDigiProducers_PPSDiamondDigiProducer_h
+#define SimPPS_PPSDiamondDigiProducers_PPSDiamondDigiProducer_h
 
 // -*- C++ -*-
 //
@@ -37,7 +37,7 @@
 
 //  ****  CTPPS
 #include "DataFormats/CTPPSDigi/interface/CTPPSDiamondDigi.h"
-#include "Geometry/VeryForwardGeometry/interface/CTPPSDiamondTopology.h"
+// #include "Geometry/VeryForwardGeometry/interface/CTPPSDiamondTopology.h"
 #include "SimPPS/PPSDiamondDigiProducer/interface/DiamondDetDigitizer.h"
 
 #include "SimDataFormats/CrossingFrame/interface/MixCollection.h"
@@ -83,33 +83,36 @@ private:
   edm::ParameterSet conf_;
 
   CLHEP::HepRandomEngine* rndEngine_ = nullptr;
-  edm::EDGetTokenT<CrossingFrame<PSimHit>> tokenCrossingFramePPSDiamond;
+  edm::EDGetTokenT<edm::PSimHitContainer> containerToken;
 
   int verbosity_;
 };
 
 DiamondDigiProducer::DiamondDigiProducer(const edm::ParameterSet& conf) : conf_(conf) {
   produces<edm::DetSetVector<CTPPSDiamondDigi>>();
+  containerToken = consumes<edm::PSimHitContainer>(edm::InputTag("g4SimHits", "CTPPSTimingHits"));
 
-  // register data to consume
-  tokenCrossingFramePPSDiamond = consumes<CrossingFrame<PSimHit>>(edm::InputTag("g4SimHitsCTPPSTimingHits"));
   verbosity_ = conf.getParameter<int>("RDimVerbosity");
-  std::cout << "here at: " << __FUNCTION__ << '\n';
 }
 
 DiamondDigiProducer::~DiamondDigiProducer() {}
 
 void DiamondDigiProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
-  std::cout << "here at: " << __FUNCTION__ << '\n';
   edm::ParameterSetDescription desc;
   desc.add<std::string>("InputCollection", "g4SimHitsCTPPSTimingHits");
   desc.add<int>("RDimVerbosity", 0);
-  // desc.add<std::string>("mixLabel", "mix");
+  desc.add<int>("RDVerbosity", 0);
+  desc.add<int>("RPDiamondChargeDivisions", 20);
+  desc.add<double>("RDimGeVPerElectron", 1.0);
+  desc.add<std::vector<double>>("RDimInterSmearing", {0.011});
+  desc.add<int>("RPixVerbosity", 1);
+  desc.add<double>("RDimDummyROCThreshold", 1.0);
+  desc.add<double>("RDimDummyROCElectronPerADC", 1.0);
+
   descriptions.add("RDimDetDigitizer", desc);
 }
 
 void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
-  std::cout << "here at: " << __FUNCTION__ << '\n';
   using namespace edm;
   if (!rndEngine_) {
     Service<RandomNumberGenerator> rng;
@@ -122,23 +125,17 @@ void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     rndEngine_ = &(rng->getEngine(iEvent.streamID()));
   }
 
-  // get calibration DB
-  // theGainCalibrationDB.getDB(iEvent, iSetup);
-
   // Step A: Get Inputs
-  edm::Handle<CrossingFrame<PSimHit>> cf;
+  edm::Handle<edm::PSimHitContainer> cf;
 
-  iEvent.getByToken(tokenCrossingFramePPSDiamond, cf);
-
-  MixCollection<PSimHit> allRDimHits{cf.product(), std::pair(0, 0)};
+  iEvent.getByToken(containerToken, cf);
 
   //Loop on PSimHit
   simhit_map SimHitMap;
   SimHitMap.clear();
 
-  MixCollection<PSimHit>::iterator isim;
-  for (isim = allRDimHits.begin(); isim != allRDimHits.end(); ++isim) {
-    SimHitMap[(*isim).detUnitId()].push_back((*isim));
+  for (PSimHitContainer::const_iterator simhit = cf->begin(); simhit != cf->end(); ++simhit) {
+    SimHitMap[simhit->detUnitId()].push_back(*simhit);
   }
 
   // Step B: LOOP on hits in event
@@ -151,7 +148,7 @@ void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     if (theAlgoMap.find(it->first) == theAlgoMap.end()) {
       theAlgoMap[it->first] = std::unique_ptr<DiamondDetDigitizer>(
-          new DiamondDetDigitizer(conf_, *rndEngine_, it->first, iSetup));  //a digitizer for eny detector
+          new DiamondDetDigitizer(conf_, *rndEngine_, it->first, iSetup));  //a digitizer for any detector
     }
 
     std::vector<int> input_links;
@@ -166,7 +163,6 @@ void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
   std::unique_ptr<edm::DetSetVector<CTPPSDiamondDigi>> digi_output(
       new edm::DetSetVector<CTPPSDiamondDigi>(theDigiVector));
-
   iEvent.put(std::move(digi_output));
 }
 
