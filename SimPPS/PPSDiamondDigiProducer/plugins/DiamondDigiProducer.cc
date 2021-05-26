@@ -131,6 +131,7 @@ void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSe
   iEvent.getByToken(containerToken, cf);
 
   //Loop on PSimHit
+  // Map<detector id, absorbed hits>
   simhit_map SimHitMap;
   SimHitMap.clear();
 
@@ -147,6 +148,8 @@ void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     edm::DetSet<CTPPSDiamondDigi> digi_collector(it->first);
 
     if (theAlgoMap.find(it->first) == theAlgoMap.end()) {
+      // Digitize the hits
+      // Map<detector id, digis>
       theAlgoMap[it->first] = std::unique_ptr<DiamondDetDigitizer>(
           new DiamondDetDigitizer(conf_, *rndEngine_, it->first, iSetup));  //a digitizer for any detector
     }
@@ -154,6 +157,7 @@ void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     std::vector<int> input_links;
     std::vector<std::vector<std::pair<int, double>>> output_digi_links;  // links to simhits
 
+    // Run the digitization step
     (theAlgoMap.find(it->first)->second)->run(SimHitMap[it->first], input_links, digi_collector.data, output_digi_links);
 
     if (!digi_collector.data.empty()) {

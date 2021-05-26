@@ -31,11 +31,7 @@ std::vector<RDimEnergyDepositUnit> RDimLinearChargeDivider::divide(const PSimHit
   //   the_energy_path_distribution_.clear();
   //   return the_energy_path_distribution_;
   // }
-
-  // TODO: change segment calculations
-  // int NumberOfSegmentation_y = (int)(1 + chargedivisionsPerStrip_ * fabs(direction.y()) / pitch_);
-  // int NumberOfSegmentation_z = (int)(1 + chargedivisionsPerThickness_ * fabs(direction.z()) / thickness_);
-  // int NumberOfSegmentation = (double)std::max(NumberOfSegmentation_y, NumberOfSegmentation_z);
+  //  | 1 | 2 | 3 | 4 | 5 |
   int NumberOfSegmentation = chargedivisions_;  // this is = 20 for pixel
 
   double eLoss = hit.energyLoss();  // Eloss in GeV
@@ -43,8 +39,10 @@ std::vector<RDimEnergyDepositUnit> RDimLinearChargeDivider::divide(const PSimHit
   the_energy_path_distribution_.resize(NumberOfSegmentation);
 
   for (int i = 0; i < NumberOfSegmentation; i++) {
-    the_energy_path_distribution_[i].setPosition(hit.entryPoint() +
-                                                 double((i + 0.5) / NumberOfSegmentation) * direction);
+    // TODO: for pixel this was =>
+    // the_energy_path_distribution_[i].setPosition(hit.entryPoint() +
+    //                                              double((i + 0.5) / NumberOfSegmentation) * direction);
+    the_energy_path_distribution_[i].setPosition(hit.entryPoint() + direction);
     the_energy_path_distribution_[i].setEnergy(eLoss / NumberOfSegmentation);
   }
   return the_energy_path_distribution_;

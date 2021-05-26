@@ -12,6 +12,8 @@ RDimLinearChargeCollectionDrifter::RDimLinearChargeCollectionDrifter(const edm::
   det_id_ = det_id;
 }
 
+
+// Converts Energy to number of electron
 // Converts a vector<energy, position> to vector<num_of_electons, 2d position, depth>
 //
 // getSigma is not implemented yet

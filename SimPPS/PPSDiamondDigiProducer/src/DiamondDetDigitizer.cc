@@ -36,5 +36,5 @@ void DiamondDetDigitizer::run(const std::vector<PSimHit> &input,
       theRDimPileUpSignals->dumpLinks();
   std::map<unsigned short, double> afterNoise;
   afterNoise = theSignal;
-  theRDimDummyROCSimulator->ConvertChargeToHits(afterNoise, theSignalProvenance, output_digi, output_digi_links);
+  theRDimDummyROCSimulator->ConvertChargeToHits(theSignal, theSignalProvenance, output_digi, output_digi_links);
 }
