@@ -42,6 +42,8 @@ private:
 
   std::unique_ptr<RDimPileUpSignals> theRDimPileUpSignals;
   std::unique_ptr<RDimDummyROCSimulator> theRDimDummyROCSimulator;
+  double GeV_per_electron_;
+  std::vector<double> charge_cloud_sigmas_vect_;
   int verbosity_;
 };
 #endif
