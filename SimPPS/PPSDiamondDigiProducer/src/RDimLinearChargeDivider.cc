@@ -26,6 +26,8 @@ RDimLinearChargeDivider::~RDimLinearChargeDivider() {}
 std::vector<RDimEnergyDepositUnit> RDimLinearChargeDivider::divide(const PSimHit& hit) {
   LocalVector direction = hit.exitPoint() - hit.entryPoint();
   // TODO: use pixel's divider
+  // NOTE:
+  // this will ignore hits that may escape any of detectors in it's path (can't reconstruct path for the hit)
   // NOTE: What's our constraints for proccessing Hit
   // if (direction.z() > 10 || direction.x() > 200 || direction.y() > 200) {
   //   the_energy_path_distribution_.clear();
@@ -38,6 +40,7 @@ std::vector<RDimEnergyDepositUnit> RDimLinearChargeDivider::divide(const PSimHit
 
   the_energy_path_distribution_.resize(NumberOfSegmentation);
 
+  // TODO: add a commented implemenetaion for Fluc
   for (int i = 0; i < NumberOfSegmentation; i++) {
     // TODO: for pixel this was =>
     // the_energy_path_distribution_[i].setPosition(hit.entryPoint() +
@@ -45,5 +48,7 @@ std::vector<RDimEnergyDepositUnit> RDimLinearChargeDivider::divide(const PSimHit
     the_energy_path_distribution_[i].setPosition(hit.entryPoint() + direction);
     the_energy_path_distribution_[i].setEnergy(eLoss / NumberOfSegmentation);
   }
+
+  // TODO: add logs for the_energy_path_distribution_
   return the_energy_path_distribution_;
 }

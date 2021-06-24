@@ -102,7 +102,7 @@ void DiamondDigiProducer::fillDescriptions(edm::ConfigurationDescriptions& descr
   desc.add<std::string>("InputCollection", "g4SimHitsCTPPSTimingHits");
   desc.add<int>("RDimVerbosity", 0);
   desc.add<int>("RDVerbosity", 0);
-  desc.add<int>("RPDiamondChargeDivisions", 20);
+  desc.add<int>("RPDiamondChargeDivisions", 1);
   desc.add<double>("RDimGeVPerElectron", 1.0);
   desc.add<std::vector<double>>("RDimInterSmearing", {0.011});
   desc.add<int>("RPixVerbosity", 1);

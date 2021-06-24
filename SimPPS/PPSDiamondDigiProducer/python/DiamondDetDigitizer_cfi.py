@@ -6,7 +6,7 @@ DiamondDetDigitizer = cms.EDProducer(
     
     RDimVerbosity=cms.int32(1),
     RDVerbosity=cms.int32(1),
-    RPDiamondChargeDivisions=cms.int32(20),
+    RPDiamondChargeDivisions=cms.int32(1),
     RDimGeVPerElectron=cms.double(1.0),
     RDimInterSmearing=cms.vdouble(0.011),
     RPixVerbosity=cms.int32(1),
