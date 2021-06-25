@@ -2,3 +2,4 @@
 *.root
 /.vscode
 /*.txt
+__init__.py

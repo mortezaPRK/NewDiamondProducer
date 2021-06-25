@@ -14,10 +14,10 @@ process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 # process.MessageLogger.threshold = cms.untracked.string('INFO')
-process.MessageLogger.cout.threshold = cms.untracked.string('INFO')
-process.MessageLogger.debugModules = cms.untracked.vstring("*")
+# process.MessageLogger.cout.threshold = cms.untracked.string('INFO')
+# process.MessageLogger.debugModules = cms.untracked.vstring("*")
 # process.MessageLogger.destinations = cms.untracked.vstring('cout')
-process.MessageLogger.cout = cms.untracked.PSet( threshold = cms.untracked.string('INFO'), enable = cms.untracked.bool(True))
+# process.MessageLogger.cout = cms.untracked.PSet( threshold = cms.untracked.string('INFO'), enable = cms.untracked.bool(True))
 
 
 process.load('Configuration.EventContent.EventContent_cff')
