@@ -144,9 +144,14 @@ void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSe
   theDigiVector.reserve(400);
   theDigiVector.clear();
 
+  std::cout << "HERE\n";
   for (simhit_map_iterator it = SimHitMap.begin(); it != SimHitMap.end(); ++it) {
     edm::DetSet<CTPPSDiamondDigi> digi_collector(it->first);
-
+    int input_size = it->second.size();
+    std::cout << "size: " << input_size << "\n";
+    for (int i = 0; i < input_size; ++i) {
+      std::cout << it->second[i] << ": " << it->first << "\n";
+    }
     if (theAlgoMap.find(it->first) == theAlgoMap.end()) {
       // Digitize the hits
       // Map<detector id, digis>

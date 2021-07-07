@@ -7,11 +7,7 @@ CTPPSDiamondTopology::CTPPSDiamondTopology() {
 
 // TODO: this is only for first plate!!
 CTPPSDiamondTopology::PartInfo CTPPSDiamondTopology::getPartInvolved(
-    double x, double y, double sigma, double& hit_pos_x, double& hit_pos_y) const {
-  hit_pos_x = x + xWidth() / 2.;
-  hit_pos_y = y + yWidth() / 2.;
-  if (!(hit_pos_x * hit_pos_y > 0))
-    throw cms::Exception("CTPPSDiamondTopology") << "out of reference frame";
+    double x, double y, double sigma) const {
 
   double hit_factor = activeEdgeFactor(x, y);
 
@@ -36,4 +32,9 @@ CTPPSDiamondTopology::PartInfo CTPPSDiamondTopology::getPartInvolved(
   lower_y -= yWidth() / 2.;
   higher_y -= yWidth() / 2.;
   return CTPPSDiamondTopology::PartInfo(lower_y, higher_y, hit_factor, sensorIndex);
+}
+
+std::ostream& operator<<(std::ostream& os, const CTPPSDiamondTopology::PartInfo& pi) {
+  os << "(higherYBorder:" << pi.higherYBorder() <<  ", lowerYBorder:" << pi.lowerYBorder() <<  ", effFactor:" << pi.effFactor() <<  ", partIndex:" << pi.partIndex() << ")"; 
+  return os;
 }

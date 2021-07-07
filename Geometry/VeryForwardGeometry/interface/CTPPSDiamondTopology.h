@@ -49,6 +49,9 @@ public:
     double higher_y_border_;
     double eff_factor_;
     int part_index_;
+
+  public:
+    friend std::ostream& operator<<(std::ostream& output, const PartInfo& p);
   };
 
 public:
@@ -91,7 +94,7 @@ public:
     // }
     return true;
   }
-  PartInfo getPartInvolved(double x, double y, double sigma, double& hit_pos_x, double& hit_pos_y) const;
+  PartInfo getPartInvolved(double x, double y, double sigma) const;
 
 private:
   double active_edge_x_;
