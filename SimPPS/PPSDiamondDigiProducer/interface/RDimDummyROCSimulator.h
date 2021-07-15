@@ -33,6 +33,13 @@ private:
   int VcaltoElectronGain_;
   int VcaltoElectronOffset_;
   bool doSingleCalibration_;
+
+  double capacitor_; 
+  double transmit_time_;
+  double resistor_;
+  
+  double calculateMaximumVoltage(double charge);
+  void calculateEdges(double vmax, double &ledge, double &tedge);
 };
 
 #endif
