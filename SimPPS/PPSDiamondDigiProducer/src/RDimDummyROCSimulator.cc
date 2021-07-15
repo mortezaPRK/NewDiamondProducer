@@ -17,28 +17,27 @@ RDimDummyROCSimulator::RDimDummyROCSimulator(const edm::ParameterSet &params, ui
 }
 
 void RDimDummyROCSimulator::ConvertChargeToHits(
-    const std::map<unsigned short, double> &signals,
-    std::map<unsigned short, std::vector<std::pair<int, double> > > &theSignalProvenance,
+    const std::vector<std::pair<double, double>> &signals,
+    std::map<unsigned short, std::vector<std::pair<int, double>>> &theSignalProvenance,
     std::vector<CTPPSDiamondDigi> &output_digi,
-    std::vector<std::vector<std::pair<int, double> > > &output_digi_links) {
-  for (std::map<unsigned short, double>::const_iterator i = signals.begin(); i != signals.end(); ++i) {
-    double vmax = calculateMaximumVoltage(i->second);
+    std::vector<std::vector<std::pair<int, double>>> &output_digi_links) {
+  int input_size = signals.size();
+  for (int i = 0; i < input_size; ++i) {
+    std::pair<double, double> signal = signals[i];
+    double vmax = calculateMaximumVoltage(signal.first);
     double ledge, tedge;
-    calculateEdges(vmax, ledge, tedge);
+    calculateEdges(vmax, signal.second, ledge, tedge);
     output_digi.push_back(CTPPSDiamondDigi(ledge, tedge, 0, true, 0));
   }
 }
 
 double RDimDummyROCSimulator::calculateMaximumVoltage(double charge) {
   double rc = resistor_ * capacitor_;
-  return (
-    (2.0 * charge * resistor_) / std::pow(transmit_time_, 2)
-  ) * (
-    transmit_time_ * (rc * std::log(rc / (rc + transmit_time_)))
-  );
+  return ((2.0 * charge * resistor_) / std::pow(transmit_time_, 2)) *
+         (transmit_time_ * (rc * std::log(rc / (rc + transmit_time_))));
 }
 
-void RDimDummyROCSimulator::calculateEdges(double vmax, double &ledge, double &tedge) {
+void RDimDummyROCSimulator::calculateEdges(double vmax, double timeOfFlight, double &ledge, double &tedge) {
   ledge = (0.2) * vmax;
   tedge = (0.2) * vmax;
 }

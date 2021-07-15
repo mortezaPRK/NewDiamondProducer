@@ -13,20 +13,22 @@ public:
 
   class ChargeInfo {
   public:
-    ChargeInfo(double energy, Local3DPoint position, double sigma, double charge)
-        : energy_(energy), position_(position), sigma_(sigma), charge_(charge) {}
+    ChargeInfo(double energy, Local3DPoint position, double sigma, double charge, double tof)
+        : energy_(energy), position_(position), sigma_(sigma), charge_(charge), tof_(tof) {}
 
     inline double energy() const { return energy_; }
     inline double positionX() const { return position_.x(); }
     inline double positionY() const { return position_.y(); }
     inline double sigma() const { return sigma_; }
     inline double charge() const { return charge_; }
+    inline double timeOfFlight() const { return tof_; }
 
   private:
     double energy_;
     Local3DPoint position_;
     double sigma_;
     double charge_;
+    double tof_;
 
   public:
     friend std::ostream& operator<<(std::ostream& output, const ChargeInfo& c);

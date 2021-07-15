@@ -13,8 +13,9 @@ RDimHitToCharge::ChargeInfo RDimHitToCharge::ChargeFromHit(const PSimHit &hit) {
     Local3DPoint position = hit.exitPoint();
     double sigma = getSigma_(position.z());
     double charge = energy / GeV_per_electron_;
+    double tof = hit.timeOfFlight();
 
-    return RDimHitToCharge::ChargeInfo(energy, position, sigma, charge);
+    return RDimHitToCharge::ChargeInfo(energy, position, sigma, charge, tof);
 }
 
 

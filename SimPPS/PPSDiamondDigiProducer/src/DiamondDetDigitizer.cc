@@ -19,7 +19,7 @@ void DiamondDetDigitizer::run(const std::vector<PSimHit> &input,
                               const std::vector<int> &input_links,
                               std::vector<CTPPSDiamondDigi> &output_digi,
                               std::vector<std::vector<std::pair<int, double> > > &output_digi_links) {
-  std::map<unsigned short, double> theDiamondChargeMap;
+  std::vector<std::pair<double, double>> theDiamondCharge;
 
   int input_size = input.size();
   
@@ -29,10 +29,7 @@ void DiamondDetDigitizer::run(const std::vector<PSimHit> &input,
     CTPPSDiamondTopology::PartInfo relevant_part = theRPDiamondDetTopology_.getPartInvolved(
         charge_info.positionX(), charge_info.positionY(), charge_info.sigma());
 
-    // part index => from 1 - 8
-    unsigned short part_index = relevant_part.partIndex();
-
-    theDiamondChargeMap[part_index] += charge_info.charge() * relevant_part.effFactor();
+    theDiamondCharge.push_back(std::pair(charge_info.charge() * relevant_part.effFactor(), charge_info.timeOfFlight()));
   }
 
   // const std::map<unsigned short, double> &theSignal = theRDimPileUpSignals->dumpSignal();
@@ -40,6 +37,6 @@ void DiamondDetDigitizer::run(const std::vector<PSimHit> &input,
       // theRDimPileUpSignals->dumpLinks();
   // std::map<unsigned short, double> afterNoise;
   // afterNoise = theSignal;
-  theRDimDummyROCSimulator->ConvertChargeToHits(theDiamondChargeMap, theSignalProvenance, output_digi, output_digi_links);
+  theRDimDummyROCSimulator->ConvertChargeToHits(theDiamondCharge, theSignalProvenance, output_digi, output_digi_links);
 }
 
