@@ -37,6 +37,7 @@
 
 //  ****  CTPPS
 #include "DataFormats/CTPPSDigi/interface/CTPPSDiamondDigi.h"
+#include "DataFormats/CTPPSDetId/interface/CTPPSDiamondDetId.h"
 // #include "Geometry/VeryForwardGeometry/interface/CTPPSDiamondTopology.h"
 #include "SimPPS/PPSDiamondDigiProducer/interface/DiamondDetDigitizer.h"
 
@@ -137,6 +138,7 @@ void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
   for (PSimHitContainer::const_iterator simhit = cf->begin(); simhit != cf->end(); ++simhit) {
     SimHitMap[simhit->detUnitId()].push_back(*simhit);
+    CTPPSDiamondDetId(simhit->detUnitId());
   }
 
   // Step B: LOOP on hits in event

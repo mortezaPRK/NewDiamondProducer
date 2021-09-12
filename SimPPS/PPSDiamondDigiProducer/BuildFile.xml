@@ -2,6 +2,7 @@
 <use   name="Geometry/VeryForwardGeometry"/>
 <use   name="FWCore/ParameterSet"/>
 <use   name="DataFormats/CTPPSDigi"/>
+<use   name="DataFormats/CTPPSDetId"/>
 
 <export>
   <lib name="1"/>
