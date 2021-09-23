@@ -6,10 +6,6 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "DataFormats/CTPPSDigi/interface/CTPPSDiamondDigi.h"
-// #include "DataFormats/CTPPSDigi/interface/CTPPSDiamondDigiCollection.h"
-// #include "CondFormats/CTPPSReadoutObjects/interface/CTPPSPixelGainCalibrations.h"
-// #include "CondFormats/CTPPSReadoutObjects/interface/CTPPSPixelAnalysisMask.h"
-// #include "RecoCTPPS/PixelLocal/interface/CTPPSPixelGainCalibrationDBService.h"
 
 class RDimDummyROCSimulator {
 public:
@@ -20,26 +16,24 @@ public:
                            std::vector<CTPPSDiamondDigi> &output_digi,
                            std::vector<std::vector<std::pair<int, double> > > &output_digi_links);
 
-private:
-  typedef std::set<unsigned short> dead_pixel_set;
-  static constexpr double highRangeCal_ = 1800.;
-  static constexpr double lowRangeCal_ = 260.;
-  static constexpr int maxADC_ = 255;
+  static void PopulateVTBins(std::vector<double> poly_coef, int num_of_bins, double min_bin_value, double max_bin_value);
 
+private:
   uint32_t det_id_;
   int verbosity_;
-  double threshold_;
-  double electron_per_adc_;
-  int VcaltoElectronGain_;
-  int VcaltoElectronOffset_;
-  bool doSingleCalibration_;
 
-  double capacitor_; 
-  double transmit_time_;
-  double resistor_;
+  static std::vector<std::pair<double, double>> v_t_bins;
+  double min_voltage_;
+  double leading_edge_height_percentage_;
+  double k_coef_;
+  double w_coef_a_;
+  double w_coef_b_;
+  double w_coef_c_;
+  double w_coef_d_;
   
   double calculateMaximumVoltage(double charge);
-  void calculateEdges(double vmax, double timeOfFlight, double &ledge, double &tedge);
+  double getLeadingEdge(double vmax, double timeOfFlight);
+  double getTrailingEdge(double vmax);
 };
 
 #endif

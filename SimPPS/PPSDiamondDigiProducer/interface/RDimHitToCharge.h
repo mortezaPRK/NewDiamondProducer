@@ -3,7 +3,6 @@
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include <vector>
-#include "Geometry/VeryForwardGeometry/interface/CTPPSDiamondTopology.h"
 #include "SimDataFormats/TrackingHit/interface/PSimHit.h"
 
 class RDimHitToCharge {
@@ -13,20 +12,18 @@ public:
 
   class ChargeInfo {
   public:
-    ChargeInfo(double energy, Local3DPoint position, double sigma, double charge, double tof)
-        : energy_(energy), position_(position), sigma_(sigma), charge_(charge), tof_(tof) {}
+    ChargeInfo(double energy, Local3DPoint position, double charge, double tof)
+        : energy_(energy), position_(position), charge_(charge), tof_(tof) {}
 
     inline double energy() const { return energy_; }
     inline double positionX() const { return position_.x(); }
     inline double positionY() const { return position_.y(); }
-    inline double sigma() const { return sigma_; }
     inline double charge() const { return charge_; }
     inline double timeOfFlight() const { return tof_; }
 
   private:
     double energy_;
     Local3DPoint position_;
-    double sigma_;
     double charge_;
     double tof_;
 
@@ -38,10 +35,7 @@ public:
 
 private:
   double GeV_per_electron_;
-  std::vector<double> charge_cloud_sigmas_vect_;
   int verbosity_;
-
-  double getSigma_(double z);
 };
 
 #endif

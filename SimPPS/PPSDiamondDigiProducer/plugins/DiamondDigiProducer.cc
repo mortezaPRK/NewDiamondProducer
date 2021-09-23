@@ -37,8 +37,6 @@
 
 //  ****  CTPPS
 #include "DataFormats/CTPPSDigi/interface/CTPPSDiamondDigi.h"
-#include "DataFormats/CTPPSDetId/interface/CTPPSDiamondDetId.h"
-// #include "Geometry/VeryForwardGeometry/interface/CTPPSDiamondTopology.h"
 #include "SimPPS/PPSDiamondDigiProducer/interface/DiamondDetDigitizer.h"
 
 #include "SimDataFormats/CrossingFrame/interface/MixCollection.h"
@@ -86,6 +84,7 @@ private:
   CLHEP::HepRandomEngine* rndEngine_ = nullptr;
   edm::EDGetTokenT<edm::PSimHitContainer> containerToken;
 
+  std::map<unsigned int, double> effMap;
   int verbosity_;
 };
 
@@ -94,6 +93,16 @@ DiamondDigiProducer::DiamondDigiProducer(const edm::ParameterSet& conf) : conf_(
   containerToken = consumes<edm::PSimHitContainer>(edm::InputTag("g4SimHits", "CTPPSTimingHits"));
 
   verbosity_ = conf.getParameter<int>("RDimVerbosity");
+  std::vector<double> voltage_time_coef_ = conf_.getParameter<std::vector<double>>("RDimVoltageTimeCoef");
+  RDimDummyROCSimulator::PopulateVTBins(voltage_time_coef_, 1000, 1.0, 5.0);
+
+  std::vector<edm::ParameterSet> detectorsEffFactors_ =
+      conf_.getParameter<std::vector<edm::ParameterSet>>("RDimEffFactors");
+  for (auto const& it : detectorsEffFactors_) {
+    unsigned int det_id = it.getParameter<unsigned int>("DetID");
+    double value = it.getParameter<double>("EffFactor");
+    effMap[det_id] = value;
+  }
 }
 
 DiamondDigiProducer::~DiamondDigiProducer() {}
@@ -102,13 +111,20 @@ void DiamondDigiProducer::fillDescriptions(edm::ConfigurationDescriptions& descr
   edm::ParameterSetDescription desc;
   desc.add<std::string>("InputCollection", "g4SimHitsCTPPSTimingHits");
   desc.add<int>("RDimVerbosity", 0);
-  desc.add<int>("RDVerbosity", 0);
-  desc.add<int>("RPDiamondChargeDivisions", 1);
   desc.add<double>("RDimGeVPerElectron", 1.0);
-  desc.add<std::vector<double>>("RDimInterSmearing", {0.011});
-  desc.add<int>("RPixVerbosity", 1);
-  desc.add<double>("RDimDummyROCThreshold", 1.0);
-  desc.add<double>("RDimDummyROCElectronPerADC", 1.0);
+  desc.add<std::vector<double>>("RDimVoltageTimeCoef", {0.98, -0.196});
+  desc.add<double>("RDimMinVoltage", 0.2);
+  desc.add<double>("RDimLeadingEdgeHeightPercentage", 0.3);
+  desc.add<double>("RDimKCoeff", .0);
+  desc.add<double>("RDimWCoeffA", 4.92027e-04);
+  desc.add<double>("RDimWCoeffB", 1.23091e+09);
+  desc.add<double>("RDimWCoeffC", -9.52939e+00);
+  desc.add<double>("RDimWCoeffD", 2.22430e-01);
+
+  edm::ParameterSetDescription factors_desc;
+  factors_desc.add<unsigned int>("DetID", 0);
+  factors_desc.add<double>("EffFactor", 0);
+  desc.addVPSet("RDimEffFactors", factors_desc);
 
   descriptions.add("RDimDetDigitizer", desc);
 }
@@ -131,14 +147,11 @@ void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
   iEvent.getByToken(containerToken, cf);
 
-  //Loop on PSimHit
-  // Map<detector id, absorbed hits>
   simhit_map SimHitMap;
   SimHitMap.clear();
 
   for (PSimHitContainer::const_iterator simhit = cf->begin(); simhit != cf->end(); ++simhit) {
     SimHitMap[simhit->detUnitId()].push_back(*simhit);
-    CTPPSDiamondDetId(simhit->detUnitId());
   }
 
   // Step B: LOOP on hits in event
@@ -146,26 +159,18 @@ void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSe
   theDigiVector.reserve(400);
   theDigiVector.clear();
 
-  std::cout << "HERE\n";
-  for (simhit_map_iterator it = SimHitMap.begin(); it != SimHitMap.end(); ++it) {
-    edm::DetSet<CTPPSDiamondDigi> digi_collector(it->first);
-    int input_size = it->second.size();
-    std::cout << "size: " << input_size << "\n";
-    for (int i = 0; i < input_size; ++i) {
-      std::cout << it->second[i] << ": " << it->first << "\n";
-    }
-    if (theAlgoMap.find(it->first) == theAlgoMap.end()) {
-      // Digitize the hits
-      // Map<detector id, digis>
-      theAlgoMap[it->first] = std::unique_ptr<DiamondDetDigitizer>(
-          new DiamondDetDigitizer(conf_, *rndEngine_, it->first, iSetup));  //a digitizer for any detector
+  for (auto const& it : SimHitMap) {
+    edm::DetSet<CTPPSDiamondDigi> digi_collector(it.first);
+    if (theAlgoMap.find(it.first) == theAlgoMap.end()) {
+      theAlgoMap[it.first] =
+          std::unique_ptr<DiamondDetDigitizer>(new DiamondDetDigitizer(conf_, *rndEngine_, it.first, iSetup));
     }
 
     std::vector<int> input_links;
-    std::vector<std::vector<std::pair<int, double>>> output_digi_links;  // links to simhits
+    std::vector<std::vector<std::pair<int, double>>> output_digi_links;
 
-    // Run the digitization step
-    (theAlgoMap.find(it->first)->second)->run(SimHitMap[it->first], input_links, digi_collector.data, output_digi_links);
+    (theAlgoMap.find(it.first)->second)
+        ->run(SimHitMap[it.first], effMap[it.first], input_links, digi_collector.data, output_digi_links);
 
     if (!digi_collector.data.empty()) {
       theDigiVector.push_back(digi_collector);
