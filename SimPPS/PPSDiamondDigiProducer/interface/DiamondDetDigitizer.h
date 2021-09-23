@@ -1,14 +1,13 @@
 #ifndef SimPPS_PPSDiamondDigiProducer_Diamond_DET_DIGITIZER_H
 #define SimPPS_PPSDiamondDigiProducer_Diamond_DET_DIGITIZER_H
 
-#include "SimDataFormats/TrackingHit/interface/PSimHit.h"
 #include <vector>
 #include <string>
 
+#include "SimDataFormats/TrackingHit/interface/PSimHit.h"
 #include "SimTracker/Common/interface/SiG4UniversalFluctuation.h"
 #include "SimGeneral/NoiseGenerators/interface/GaussianTailNoiseGenerator.h"
 #include "SimPPS/PPSDiamondDigiProducer/interface/RDimDummyROCSimulator.h"
-#include "Geometry/VeryForwardGeometry/interface/CTPPSDiamondTopology.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
@@ -29,6 +28,7 @@ public:
                       const edm::EventSetup &iSetup);
 
   void run(const std::vector<PSimHit> &input,
+           const double effFactor,
            const std::vector<int> &input_links,
            std::vector<CTPPSDiamondDigi> &output_digi,
            std::vector<std::vector<std::pair<int, double>>> &output_digi_links);
@@ -36,11 +36,9 @@ public:
   ~DiamondDetDigitizer();
 
 private:
-  edm::ParameterSet conf_;
   uint32_t det_id_;
   std::unique_ptr<RDimDummyROCSimulator> theRDimDummyROCSimulator;
   RDimHitToCharge theHitToChargeConvertor;
-  CTPPSDiamondTopology theRPDiamondDetTopology_;
   int verbosity_;
 };
 #endif
