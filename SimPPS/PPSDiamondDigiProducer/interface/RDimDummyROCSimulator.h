@@ -11,7 +11,7 @@ class RDimDummyROCSimulator {
 public:
   RDimDummyROCSimulator(const edm::ParameterSet &params, uint32_t det_id);
 
-  void ConvertChargeToHits(const std::vector<std::pair<double,double>> &signals,
+  void ConvertChargeToSignal(const std::vector<std::pair<double,double>> &signals,
                            std::map<unsigned short, std::vector<std::pair<int, double> > > &theSignalProvenance,
                            std::vector<CTPPSDiamondDigi> &output_digi,
                            std::vector<std::vector<std::pair<int, double> > > &output_digi_links);

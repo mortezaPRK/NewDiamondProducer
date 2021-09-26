@@ -170,8 +170,7 @@ void DiamondDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     std::vector<std::vector<std::pair<int, double>>> output_digi_links;
 
     (theAlgoMap.find(it.first)->second)
-        ->run(SimHitMap[it.first], effMap[it.first], input_links, digi_collector.data, output_digi_links);
-
+        ->run(it.second, effMap[it.first], input_links, digi_collector.data, output_digi_links);
     if (!digi_collector.data.empty()) {
       theDigiVector.push_back(digi_collector);
     }

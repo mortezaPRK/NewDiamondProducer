@@ -46,7 +46,7 @@ void RDimDummyROCSimulator::PopulateVTBins(std::vector<double> poly_coef,
   }
 }
 
-void RDimDummyROCSimulator::ConvertChargeToHits(
+void RDimDummyROCSimulator::ConvertChargeToSignal(
     const std::vector<std::pair<double, double>> &signals,
     std::map<unsigned short, std::vector<std::pair<int, double>>> &theSignalProvenance,
     std::vector<CTPPSDiamondDigi> &output_digi,
