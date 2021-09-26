@@ -29,9 +29,7 @@ public:
 
   void run(const std::vector<PSimHit> &input,
            const double effFactor,
-           const std::vector<int> &input_links,
-           std::vector<CTPPSDiamondDigi> &output_digi,
-           std::vector<std::vector<std::pair<int, double>>> &output_digi_links);
+           std::vector<CTPPSDiamondDigi> &output_digi);
 
   ~DiamondDetDigitizer();
 
