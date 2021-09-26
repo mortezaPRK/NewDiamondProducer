@@ -17,9 +17,7 @@ DiamondDetDigitizer::~DiamondDetDigitizer() {}
 
 void DiamondDetDigitizer::run(const std::vector<PSimHit> &input,
                               const double effFactor,
-                              const std::vector<int> &input_links,
-                              std::vector<CTPPSDiamondDigi> &output_digi,
-                              std::vector<std::vector<std::pair<int, double>>> &output_digi_links) {
+                              std::vector<CTPPSDiamondDigi> &output_digi) {
   std::vector<std::pair<double, double>> theDiamondCharge;
 
   int input_size = input.size();
@@ -28,6 +26,6 @@ void DiamondDetDigitizer::run(const std::vector<PSimHit> &input,
     theDiamondCharge.push_back(std::pair(charge_info.charge() * effFactor, charge_info.timeOfFlight()));
   }
 
-  std::map<unsigned short, std::vector<std::pair<int, double>>> theSignalProvenance;
-  theRDimDummyROCSimulator->ConvertChargeToHits(theDiamondCharge, theSignalProvenance, output_digi, output_digi_links);
+  std::vector<CTPPSDiamondDigi> signals = theRDimDummyROCSimulator->ConvertChargesToSignal(theDiamondCharge);
+  output_digi.insert(output_digi.end(), signals.begin(), signals.end());
 }

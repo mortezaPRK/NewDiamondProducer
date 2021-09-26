@@ -46,12 +46,11 @@ void RDimDummyROCSimulator::PopulateVTBins(std::vector<double> poly_coef,
   }
 }
 
-void RDimDummyROCSimulator::ConvertChargeToHits(
-    const std::vector<std::pair<double, double>> &signals,
-    std::map<unsigned short, std::vector<std::pair<int, double>>> &theSignalProvenance,
-    std::vector<CTPPSDiamondDigi> &output_digi,
-    std::vector<std::vector<std::pair<int, double>>> &output_digi_links) {
+std::vector<CTPPSDiamondDigi> RDimDummyROCSimulator::ConvertChargesToSignal(const std::vector<std::pair<double, double>> &signals) {
   int input_size = signals.size();
+  std::vector<CTPPSDiamondDigi> out;
+  out.reserve(input_size);
+  
   bool is_multi_hit = input_size > 1;
   for (int i = 0; i < input_size; ++i) {
     std::pair<double, double> signal = signals[i];
@@ -61,8 +60,9 @@ void RDimDummyROCSimulator::ConvertChargeToHits(
 
     double ledge = getLeadingEdge(vmax, signal.second);
     double tedge = getTrailingEdge(vmax);
-    output_digi.push_back(CTPPSDiamondDigi(ledge, tedge, min_voltage_, is_multi_hit, 0));
+    out.push_back(CTPPSDiamondDigi(ledge, tedge, min_voltage_, is_multi_hit, 0));
   }
+  return out;
 }
 
 double RDimDummyROCSimulator::calculateMaximumVoltage(double charge) {
