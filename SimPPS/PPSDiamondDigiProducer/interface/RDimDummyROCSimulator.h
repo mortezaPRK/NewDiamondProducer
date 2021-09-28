@@ -29,8 +29,8 @@ private:
   double w_coef_d_;
   
   double calculateMaximumVoltage(double charge);
-  double getLeadingEdge(double vmax, double timeOfFlight);
-  double getTrailingEdge(double vmax);
+  double getLeadingEdge(double vmax, double time_of_flight);
+  double getTrailingEdge(double vmax, double time_of_flight);
 };
 
 #endif

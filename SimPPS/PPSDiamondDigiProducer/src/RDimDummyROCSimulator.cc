@@ -59,7 +59,7 @@ std::vector<CTPPSDiamondDigi> RDimDummyROCSimulator::ConvertChargesToSignal(cons
       continue;
 
     double ledge = getLeadingEdge(vmax, signal.second);
-    double tedge = getTrailingEdge(vmax);
+    double tedge = getTrailingEdge(vmax, signal.second);
     out.push_back(CTPPSDiamondDigi(ledge * 1000, tedge * 1000, min_voltage_, is_multi_hit, 0));
   }
   return out;
@@ -76,7 +76,7 @@ double RDimDummyROCSimulator::calculateMaximumVoltage(double charge) {
   return max_v;
 }
 
-double RDimDummyROCSimulator::getLeadingEdge(double vmax, double timeOfFlight) {
+double RDimDummyROCSimulator::getLeadingEdge(double vmax, double time_of_flight) {
   // to determine the value of leading edge, we have to find the nearest bin
   //  the exact value is: vmax * leading_edge_height_percentage_
   // so we iterate over all bins until we pass the vmax * leading_edge_height_percentage_
@@ -84,17 +84,17 @@ double RDimDummyROCSimulator::getLeadingEdge(double vmax, double timeOfFlight) {
   double ledge_volate = leading_edge_height_percentage_ * vmax;
   for (auto const &x : RDimDummyROCSimulator::v_t_bins) {
     if (x.first > ledge_volate) {
-      return x.second;
+      return x.second + time_of_flight;
     }
   }
   return -1;
 }
 
-double RDimDummyROCSimulator::getTrailingEdge(double vmax) {
+double RDimDummyROCSimulator::getTrailingEdge(double vmax, double time_of_flight) {
   // assuming vmax -> w relation: v = a * exp(b * w + c) + d
   // the reverse relation is: w[v] = (ln((v - d) / a) - c) / b
   // trailing edge then become: tedge = k + w[v]
-  return k_coef_ + (std::log((vmax - w_coef_d_) / w_coef_a_) - w_coef_c_) / w_coef_b_;
+  return time_of_flight + k_coef_ + (std::log((vmax - w_coef_d_) / w_coef_a_) - w_coef_c_) / w_coef_b_;
 }
 
 std::vector<std::pair<double, double>> RDimDummyROCSimulator::v_t_bins;
