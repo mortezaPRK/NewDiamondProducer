@@ -60,7 +60,7 @@ std::vector<CTPPSDiamondDigi> RDimDummyROCSimulator::ConvertChargesToSignal(cons
 
     double ledge = getLeadingEdge(vmax, signal.second);
     double tedge = getTrailingEdge(vmax);
-    out.push_back(CTPPSDiamondDigi(ledge, tedge, min_voltage_, is_multi_hit, 0));
+    out.push_back(CTPPSDiamondDigi(ledge * 1000, tedge * 1000, min_voltage_, is_multi_hit, 0));
   }
   return out;
 }
