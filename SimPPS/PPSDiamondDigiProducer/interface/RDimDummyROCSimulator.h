@@ -7,13 +7,19 @@
 
 #include "DataFormats/CTPPSDigi/interface/CTPPSDiamondDigi.h"
 
+namespace CLHEP {
+  class HepRandomEngine;
+}
+
 class RDimDummyROCSimulator {
 public:
-  RDimDummyROCSimulator(const edm::ParameterSet &params, uint32_t det_id);
+  CLHEP::HepRandomEngine* rndEngine_ = nullptr;
+
+  RDimDummyROCSimulator(const edm::ParameterSet &params,CLHEP::HepRandomEngine &rng, uint32_t det_id);
 
   std::vector<CTPPSDiamondDigi> ConvertChargesToSignal(const std::vector<std::pair<double,double>> &signals);
 
-  static void PopulateVTBins(std::vector<double> poly_coef, int num_of_bins, double min_bin_value, double max_bin_value);
+  static void PopulateVTBins(std::vector<edm::ParameterSet> poly_coef, int num_of_bins, double min_bin_value, double max_bin_value);
 
 private:
   uint32_t det_id_;
@@ -23,10 +29,7 @@ private:
   double min_voltage_;
   double leading_edge_height_percentage_;
   double k_coef_;
-  double w_coef_a_;
-  double w_coef_b_;
-  double w_coef_c_;
-  double w_coef_d_;
+  std::vector<edm::ParameterSet> w_coef_;
   
   double calculateMaximumVoltage(double charge);
   double getLeadingEdge(double vmax, double time_of_flight);

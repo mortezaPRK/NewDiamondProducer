@@ -6,19 +6,19 @@
 #include <iostream>
 #include <cmath>
 
-RDimDummyROCSimulator::RDimDummyROCSimulator(const edm::ParameterSet &params, uint32_t det_id) : det_id_(det_id) {
+RDimDummyROCSimulator::RDimDummyROCSimulator(const edm::ParameterSet &params,
+                                             CLHEP::HepRandomEngine &rng,
+                                             uint32_t det_id)
+    : det_id_(det_id) {
   verbosity_ = params.getParameter<int>("RDimVerbosity");
-
+  rndEngine_ = &rng;
   min_voltage_ = params.getParameter<double>("RDimMinVoltage");
   leading_edge_height_percentage_ = params.getParameter<double>("RDimLeadingEdgeHeightPercentage");
   k_coef_ = params.getParameter<double>("RDimKCoeff");
-  w_coef_a_ = params.getParameter<double>("RDimWCoeffA");
-  w_coef_b_ = params.getParameter<double>("RDimWCoeffB");
-  w_coef_c_ = params.getParameter<double>("RDimWCoeffC");
-  w_coef_d_ = params.getParameter<double>("RDimWCoeffD");
+  w_coef_ = params.getParameter<std::vector<edm::ParameterSet>>("RDimWCoeff");
 }
 
-void RDimDummyROCSimulator::PopulateVTBins(std::vector<double> poly_coef,
+void RDimDummyROCSimulator::PopulateVTBins(std::vector<edm::ParameterSet> poly_coef,
                                            int num_of_bins,
                                            double min_bin_value,
                                            double max_bin_value) {
@@ -35,8 +35,10 @@ void RDimDummyROCSimulator::PopulateVTBins(std::vector<double> poly_coef,
   while (true) {
     double t_value = min_bin_value + bin_step * current_bin++;
     double v_value = 0;
-    for (int j = 0; j < poly_size; j++) {
-      v_value += std::pow(t_value, j) * poly_coef[j];
+    for (auto const &it : poly_coef) {
+      unsigned int pow = it.getParameter<unsigned int>("Power");
+      double coeff = it.getParameter<double>("Coeff");
+      v_value += std::pow(t_value, pow) * coeff;
     }
     if (v_value < max_v) {
       break;
@@ -46,11 +48,12 @@ void RDimDummyROCSimulator::PopulateVTBins(std::vector<double> poly_coef,
   }
 }
 
-std::vector<CTPPSDiamondDigi> RDimDummyROCSimulator::ConvertChargesToSignal(const std::vector<std::pair<double, double>> &signals) {
+std::vector<CTPPSDiamondDigi> RDimDummyROCSimulator::ConvertChargesToSignal(
+    const std::vector<std::pair<double, double>> &signals) {
   int input_size = signals.size();
   std::vector<CTPPSDiamondDigi> out;
   out.reserve(input_size);
-  
+
   bool is_multi_hit = input_size > 1;
   for (int i = 0; i < input_size; ++i) {
     std::pair<double, double> signal = signals[i];
@@ -91,10 +94,20 @@ double RDimDummyROCSimulator::getLeadingEdge(double vmax, double time_of_flight)
 }
 
 double RDimDummyROCSimulator::getTrailingEdge(double vmax, double time_of_flight) {
-  // assuming vmax -> w relation: v = a * exp(b * w + c) + d
-  // the reverse relation is: w[v] = (ln((v - d) / a) - c) / b
-  // trailing edge then become: tedge = k + w[v]
-  return time_of_flight + k_coef_ + (std::log((vmax - w_coef_d_) / w_coef_a_) - w_coef_c_) / w_coef_b_;
+  for (auto const &x : w_coef_) {
+    double start = x.getParameter<double>("RangeStart");
+    double end = x.getParameter<double>("RangeEnd");
+    if (vmax < start || vmax > end) {
+      continue;
+    }
+    edm::ParameterSet fit = x.getParameter<edm::ParameterSet>("Fit");
+    double constant = fit.getParameter<double>("Constant");
+    double mean = fit.getParameter<double>("Mean");
+    double sigma = fit.getParameter<double>("Sigma");
+    // TODO: generate random value based on fit values
+    return time_of_flight + k_coef_;
+  }
+  return -1;
 }
 
 std::vector<std::pair<double, double>> RDimDummyROCSimulator::v_t_bins;

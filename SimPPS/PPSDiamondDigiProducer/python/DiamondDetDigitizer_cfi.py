@@ -3,7 +3,6 @@ import FWCore.ParameterSet.Config as cms
 DiamondDetDigitizer = cms.EDProducer(
     "DiamondDigiProducer",
     InputCollection=cms.string("g4SimHitsCTPPSTimingHits"),
-    
     RDimVerbosity=cms.int32(1),
     RDimGeVPerElectron=cms.double(1.0),
     RDimEffFactors=cms.VPSet(
@@ -54,12 +53,101 @@ DiamondDetDigitizer = cms.EDProducer(
         cms.PSet(DetID=cms.uint32(2071359488), EffFactor=cms.double(1)),
         cms.PSet(DetID=cms.uint32(2071363584), EffFactor=cms.double(1)),
     ),
-    RDimVoltageTimeCoef=cms.vdouble(0.07732, 0.1347, 0.03328, -0.03631, -0.002081, 0.005676, -0.001506, 0.0001626, -0.000006481),
+    RDimVoltageTimeCoef=cms.VPSet(
+        cms.PSet(Power=cms.uint32(0), Coeff=cms.double(0.07732)),
+        cms.PSet(Power=cms.uint32(1), Coeff=cms.double(0.1347)),
+        cms.PSet(Power=cms.uint32(2), Coeff=cms.double(0.03328)),
+        cms.PSet(Power=cms.uint32(3), Coeff=cms.double(-0.03631)),
+        cms.PSet(Power=cms.uint32(4), Coeff=cms.double(-0.002081)),
+        cms.PSet(Power=cms.uint32(5), Coeff=cms.double(0.005676)),
+        cms.PSet(Power=cms.uint32(6), Coeff=cms.double(-0.001506)),
+        cms.PSet(Power=cms.uint32(7), Coeff=cms.double(0.0001626)),
+        cms.PSet(Power=cms.uint32(8), Coeff=cms.double(-0.000006481)),
+    ),
     RDimMinVoltage=cms.double(0.2),
     RDimLeadingEdgeHeightPercentage=cms.double(0.3),
     RDimKCoeff=cms.double(0),
-    RDimWCoeffA=cms.double(4.92027e-04),
-    RDimWCoeffB=cms.double(1.23091e+09),
-    RDimWCoeffC=cms.double(-9.52939e+00),
-    RDimWCoeffD=cms.double(2.22430e-01),
+    RDimWCoeff=cms.VPSet(
+        cms.PSet(
+            RangeStart=cms.double(0.119),
+            RangeEnd=cms.double(0.24),
+            Fit=cms.PSet(
+                Constant=cms.double(128.097),
+                Mean=cms.double(1.0982e-08),
+                Sigma=cms.double(6.48116e-10),
+            ),
+        ),
+        cms.PSet(
+            RangeStart=cms.double(0.239),
+            RangeEnd=cms.double(0.36),
+            Fit=cms.PSet(
+                Constant=cms.double(1551.82),
+                Mean=cms.double(1.21456e-08),
+                Sigma=cms.double(4.44216e-10),
+            ),
+        ),
+        cms.PSet(
+            RangeStart=cms.double(0.359),
+            RangeEnd=cms.double(0.48),
+            Fit=cms.PSet(
+                Constant=cms.double(3188.02),
+                Mean=cms.double(1.27063e-08),
+                Sigma=cms.double(2.91684e-10),
+            ),
+        ),
+        cms.PSet(
+            RangeStart=cms.double(0.479),
+            RangeEnd=cms.double(0.6),
+            Fit=cms.PSet(
+                Constant=cms.double(1745.47),
+                Mean=cms.double(1.30397e-08),
+                Sigma=cms.double(3.10651e-10),
+            ),
+        ),
+        cms.PSet(
+            RangeStart=cms.double(0.599),
+            RangeEnd=cms.double(0.72),
+            Fit=cms.PSet(
+                Constant=cms.double(978.078),
+                Mean=cms.double(1.33045e-08),
+                Sigma=cms.double(3.75641e-10),
+            ),
+        ),
+        cms.PSet(
+            RangeStart=cms.double(0.719),
+            RangeEnd=cms.double(0.84),
+            Fit=cms.PSet(
+                Constant=cms.double(781.368),
+                Mean=cms.double(1.3474e-08),
+                Sigma=cms.double(3.75492e-10),
+            ),
+        ),
+        cms.PSet(
+            RangeStart=cms.double(0.839),
+            RangeEnd=cms.double(0.96),
+            Fit=cms.PSet(
+                Constant=cms.double(651.002),
+                Mean=cms.double(1.35707e-08),
+                Sigma=cms.double(3.44168e-10),
+            ),
+        ),
+        cms.PSet(
+            RangeStart=cms.double(0.959),
+            RangeEnd=cms.double(1.08),
+            Fit=cms.PSet(
+                Constant=cms.double(450.257),
+                Mean=cms.double(1.36383e-08),
+                Sigma=cms.double(3.19161e-10),
+            ),
+        ),
+        cms.PSet(
+            RangeStart=cms.double(1.079),
+            RangeEnd=cms.double(1.2),
+            Fit=cms.PSet(
+                Constant=cms.double(-1353.37),
+                Mean=cms.double(1.84313e-08),
+                Sigma=cms.double(2.22101e-10),
+            ),
+        ),
+    ),
 )
