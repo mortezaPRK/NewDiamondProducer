@@ -18195,31 +18195,104 @@ TH2D *fillBins()
    return AmplitudeVsWidth_0_2__1;
 }
 
-void AW_example()
+
+void print_fit_info(TAxis *yAxis, TFitResultPtr prf, int start_bin, int end_bin)
+{
+   std::cout << "FIT => Range: [" << yAxis->GetBinLowEdge(start_bin) << "," << yAxis->GetBinUpEdge(end_bin) << "] "
+             << "Params => "
+             << "Constant: " << prf->Parameter(0) << " "
+             << "Mean: " << prf->Parameter(1) << " "
+             << "Sigma: " << prf->Parameter(2) << " "
+             << "Ndf: " << prf->Ndf() << " "
+             << "Chi: " << prf->Chi2() << " "
+             << "Chi/ndf: " << prf->Chi2() / prf->Ndf() << std::endl;
+}
+
+// Draw Whole Histogram
+void AW_draw()
+{
+   TH2D *AmplitudeVsWidth_0_2__1 = fillBins();
+   AmplitudeVsWidth_0_2__1->Draw();
+}
+
+// Draw Slice of projected Histogram
+void AW_draw_slice(int bin, int num_of_bin_slices = 10)
+{
+   if (bin < 0 || bin >= num_of_bin_slices) {
+      std::cout << "bin should be between 0 and " << num_of_bin_slices << std::endl;
+      return;
+   }
+   TH2D *AmplitudeVsWidth_0_2__1 = fillBins();
+   TAxis *yAxis = AmplitudeVsWidth_0_2__1->GetYaxis();
+   Int_t num_of_bins = yAxis->GetNbins();
+
+   int bin_size = num_of_bins / num_of_bin_slices;
+
+   int start_bin = bin * bin_size;
+   int end_bin = start_bin + bin_size;
+   TH1D *pr = AmplitudeVsWidth_0_2__1->ProjectionX("_px", start_bin, end_bin);
+   TFitResultPtr prf = pr->Fit("gaus", "SQN0", "", 5e-9, 18e-9);
+   Int_t fitStatus = prf;
+   if (fitStatus != 0)
+   {
+      std::cout << "could not fit for range: [" << start_bin << "," << end_bin << "] error: " << fitStatus << std::endl;
+      return;
+   }
+   print_fit_info(yAxis, prf, start_bin, end_bin);
+   pr->Draw();
+}
+
+// Print fit info for all slices of a Histogram
+void AW_constat_slices(int num_of_bin_slices = 10)
 {
    TH2D *AmplitudeVsWidth_0_2__1 = fillBins();
    TAxis *yAxis = AmplitudeVsWidth_0_2__1->GetYaxis();
    Int_t num_of_bins = yAxis->GetNbins();
 
-   int num_of_bin_slices = 10;
    int bin_size = num_of_bins / num_of_bin_slices;
+
    for (int i = 0; i < num_of_bin_slices; i++)
    {
       int start_bin = i * bin_size;
       int end_bin = start_bin + bin_size;
       TH1D *pr = AmplitudeVsWidth_0_2__1->ProjectionX("_px", start_bin, end_bin);
-      TFitResultPtr prf = pr->Fit("gaus", "SQN0");
+      TFitResultPtr prf = pr->Fit("gaus", "SQN0", "", 5e-9, 18e-9);
       Int_t fitStatus = prf;
       if (fitStatus != 0)
       {
-         std::cout << "could not fit for range: [" + std::to_string(start_bin) + "," + std::to_string(end_bin) + "] error: " + std::to_string(fitStatus) + "\n";
+         std::cout << "could not fit for range: [" << start_bin << "," << end_bin << "] error: " << fitStatus << std::endl;
          continue;
       }
-      std::cout << "FIT => Range: [" << yAxis->GetBinLowEdge(start_bin) << "," << yAxis->GetBinUpEdge(end_bin) << "] "
-                << "Params => "
-                << "Constant: " << prf->Parameter(0) << " "
-                << "Mean: " << prf->Parameter(1) << " "
-                << "Sigma: " << prf->Parameter(2) << " "
-                << "Chi: " << prf->Chi2() << "\n";
+      print_fit_info(yAxis, prf, start_bin, end_bin);
+   }
+}
+
+// Calculate Chi2/Ndf for multiple slicing scenraio
+void AW_dynamic_slices(int min_num_of_bin_slices = 5, int max_num_of_bin_slices = 20)
+{
+   TH2D *AmplitudeVsWidth_0_2__1 = fillBins();
+   TAxis *yAxis = AmplitudeVsWidth_0_2__1->GetYaxis();
+   Int_t num_of_bins = yAxis->GetNbins();
+
+   for (int num_of_bin_slices = min_num_of_bin_slices; num_of_bin_slices <= max_num_of_bin_slices; num_of_bin_slices++)
+   {
+      int number_of_failures = 0;
+      double acc = 0;
+      int bin_size = num_of_bins / num_of_bin_slices;
+      for (int i = 0; i < num_of_bin_slices; i++)
+      {
+         int start_bin = i * bin_size;
+         int end_bin = start_bin + bin_size;
+         TH1D *pr = AmplitudeVsWidth_0_2__1->ProjectionX("_px", start_bin, end_bin);
+         TFitResultPtr prf = pr->Fit("gaus", "SQN0", "", 5e-9, 18e-9);
+         Int_t fitStatus = prf;
+         if (fitStatus != 0)
+         {
+            number_of_failures++;
+            continue;
+         }
+         acc += prf->Chi2() / prf->Ndf();
+      }
+      std::cout << "for " << num_of_bin_slices << " slices, failed in " << number_of_failures << " step(s) and chi2/ndf is " << acc / (num_of_bin_slices - number_of_failures) << std::endl;
    }
 }

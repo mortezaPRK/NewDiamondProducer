@@ -9,6 +9,7 @@
 
 namespace CLHEP {
   class HepRandomEngine;
+  class RandGaus;
 }
 
 class RDimDummyROCSimulator {
@@ -34,6 +35,7 @@ private:
   double calculateMaximumVoltage(double charge);
   double getLeadingEdge(double vmax, double time_of_flight);
   double getTrailingEdge(double vmax, double time_of_flight);
+  double randomGaus(double constant, double mean, double sigma);
 };
 
 #endif

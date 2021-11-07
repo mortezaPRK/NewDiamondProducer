@@ -105,9 +105,15 @@ double RDimDummyROCSimulator::getTrailingEdge(double vmax, double time_of_flight
     double mean = fit.getParameter<double>("Mean");
     double sigma = fit.getParameter<double>("Sigma");
     // TODO: generate random value based on fit values
-    return time_of_flight + k_coef_;
+    return time_of_flight + k_coef_ + randomGaus(constant, mean, sigma);
   }
   return -1;
 }
+
+double RDimDummyROCSimulator::randomGaus(double constant, double mean, double sigma) {
+  double result = CLHEP::RandGaus::shoot(rndEngine_);
+  return mean + sigma * result;
+}
+
 
 std::vector<std::pair<double, double>> RDimDummyROCSimulator::v_t_bins;
