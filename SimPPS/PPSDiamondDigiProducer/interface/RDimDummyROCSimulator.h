@@ -9,7 +9,7 @@
 
 namespace CLHEP {
   class HepRandomEngine;
-  class RandGaus;
+  class RandGauss;
 }
 
 class RDimDummyROCSimulator {

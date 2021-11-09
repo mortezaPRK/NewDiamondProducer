@@ -5,6 +5,7 @@
 #include "TRandom.h"
 #include <iostream>
 #include <cmath>
+#include <CLHEP/Random/RandGauss.h>
 
 RDimDummyROCSimulator::RDimDummyROCSimulator(const edm::ParameterSet &params,
                                              CLHEP::HepRandomEngine &rng,
@@ -31,7 +32,6 @@ void RDimDummyROCSimulator::PopulateVTBins(std::vector<edm::ParameterSet> poly_c
   double bin_step = (max_bin_value - min_bin_value) / (2 * num_of_bins);
   double max_v = 0;
   int current_bin = 0;
-  int poly_size = poly_coef.size();
   while (true) {
     double t_value = min_bin_value + bin_step * current_bin++;
     double v_value = 0;
@@ -104,15 +104,14 @@ double RDimDummyROCSimulator::getTrailingEdge(double vmax, double time_of_flight
     double constant = fit.getParameter<double>("Constant");
     double mean = fit.getParameter<double>("Mean");
     double sigma = fit.getParameter<double>("Sigma");
-    // TODO: generate random value based on fit values
     return time_of_flight + k_coef_ + randomGaus(constant, mean, sigma);
   }
   return -1;
 }
 
 double RDimDummyROCSimulator::randomGaus(double constant, double mean, double sigma) {
-  double result = CLHEP::RandGaus::shoot(rndEngine_);
-  return mean + sigma * result;
+  double result = CLHEP::RandGauss::shoot(rndEngine_, mean, sigma);
+  return result;
 }
 
 

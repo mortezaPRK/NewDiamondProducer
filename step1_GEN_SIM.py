@@ -27,7 +27,7 @@ process.RandomNumberGeneratorService.generator.initialSeed = cms.untracked.uint3
 process.load('SimG4Core.Application.g4SimHits_cfi')
 process.g4SimHits.LHCTransport = cms.bool(True)
 
-nEvent_ = 100
+nEvent_ = 1000
 process.maxEvents = cms.untracked.PSet(
         input = cms.untracked.int32(nEvent_)
         )

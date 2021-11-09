@@ -134,7 +134,7 @@ void DiamondDigiProducer::fillDescriptions(edm::ConfigurationDescriptions& descr
   ledge_fit_desc.add<double>("Constant", 0);
   ledge_fit_desc.add<double>("Mean", 0);
   ledge_fit_desc.add<double>("Sigma", 0);
-  ledge_desc.add<edm::ParameterSetDescription>("Fit", ledge_fit_desc)
+  ledge_desc.add<edm::ParameterSetDescription>("Fit", ledge_fit_desc);
   desc.addVPSet("RDimWCoeff", ledge_desc);
 
   descriptions.add("RDimDetDigitizer", desc);
