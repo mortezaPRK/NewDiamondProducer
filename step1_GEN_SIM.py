@@ -1,94 +1,51 @@
-# Auto generated configuration file
-# using: 
-# Revision: 1.19 
-# Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: GluGluTo2Jets_M_100_7TeV_exhume_cff.py --mc --eventcontent FEVTDEBUG --datatier GEN-SIM --conditions 80X_mcRun2_asymptotic_2016_v2 --step GEN,SIM --era Run2_25ns --geometry Extended2017dev --processName=CTPPS --no_exec
 import FWCore.ParameterSet.Config as cms
 
-from Configuration.StandardSequences.Eras import eras
+import random
+import math
 
-process = cms.Process('SIM',eras.Run2_2017)
+from Configuration.StandardSequences.Eras import eras
+process = cms.Process('SIM',eras.Run3)
 
 # import of standard configurations
+process.load("CondCore.CondDB.CondDB_cfi")
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
-process.load('Configuration.Geometry.GeometryExtended2017_CTPPS_cff')
 process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load('Configuration.StandardSequences.Generator_cff')
-process.load('IOMC.EventVertexGenerators.VtxSmearedRealistic25ns13TeVEarly2017Collision_cfi')
+process.load('IOMC.EventVertexGenerators.VtxSmearedHLLHC14TeV_cfi')
 process.load('GeneratorInterface.Core.genFilterSummary_cff')
 process.load('Configuration.StandardSequences.SimIdeal_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-process.load('Geometry.HcalCommonData.hcalDDDSimConstants_cff')
+
+process.load('Configuration.Geometry.GeometryExtended2021_cff')
+
+process.RandomNumberGeneratorService.generator.initialSeed = cms.untracked.uint32(random.randint(0,900000000))
 
 process.load('SimG4Core.Application.g4SimHits_cfi')
-process.g4SimHits.Physics.DefaultCutValue = 100.
-process.g4SimHits.UseMagneticField              = False
-process.g4SimHits.Generator.ApplyPCuts          = False
-process.g4SimHits.Generator.ApplyPhiCuts        = False
-process.g4SimHits.Generator.ApplyEtaCuts        = False
-process.g4SimHits.Generator.HepMCProductLabel   = 'LHCTransport'
-process.g4SimHits.Generator.MinEtaCut        = -13.0
-process.g4SimHits.Generator.MaxEtaCut        = 13.0
-process.g4SimHits.Generator.Verbosity        = 0
-process.g4SimHits.Generator.EtaCutForHector  = 7.0
+process.g4SimHits.LHCTransport = cms.bool(True)
 
-process.g4SimHits.G4TrackingManagerVerbosity = cms.untracked.int32(3)
-process.g4SimHits.SteppingAction.MaxTrackTime = cms.double(2000.0)
-process.g4SimHits.StackingAction.MaxTrackTime = cms.double(2000.0)
-
-process.common_maximum_timex = cms.PSet( # need to be localy redefined
-   MaxTrackTime  = cms.double(2000.0),  # need to be localy redefined
-   MaxTimeNames  = cms.vstring('ZDCRegion'), # need to be localy redefined
-   MaxTrackTimes = cms.vdouble(10000.0),  # need to be localy redefined
-   DeadRegions = cms.vstring()
-)
-
+nEvent_ = 1000
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(200)
-)
+        input = cms.untracked.int32(nEvent_)
+        )
 
-# Input source
 process.source = cms.Source("EmptySource")
-
-process.options = cms.untracked.PSet(
+"""
+process.source = cms.Source("EmptySource",
+                firstRun = cms.untracked.uint32(324612),               #2018D
+                firstTime = cms.untracked.uint64(6612348794983940096)  
 )
-
-# Production Info
-process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('GluGluTo2Jets_M_100_7TeV_exhume_cff.py nevts:1'),
-    name = cms.untracked.string('Applications'),
-    version = cms.untracked.string('$Revision: 1.19 $')
-)
-
-# Output definition
-
-process.FEVTDEBUGoutput = cms.OutputModule("PoolOutputModule",
-    SelectEvents = cms.untracked.PSet(
-        SelectEvents = cms.vstring('generation_step')
-    ),
-    dataset = cms.untracked.PSet(
-        dataTier = cms.untracked.string('GEN-SIM'),
-        filterName = cms.untracked.string('')
-    ),
-    eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
-    fileName = cms.untracked.string('GluGlu_GEN_SIM_2017.root'),
-    outputCommands = process.FEVTDEBUGEventContent.outputCommands,
-    splitLevel = cms.untracked.int32(0)
-)
-
-# Additional output definition
-
-# Other statements
-process.genstepfilter.triggerConditions=cms.vstring("generation_step")
-
+"""
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2017_realistic', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2021_realistic', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, "106X_dataRun2_v26")
 
-process.load('PhysicsTools.HepMCCandAlgos.genParticles_cfi')
+# generator
+
+
 process.generator = cms.EDFilter("ExhumeGeneratorFilter",
     ExhumeParameters = cms.PSet(
         AlphaEw = cms.double(0.0072974),
@@ -124,24 +81,31 @@ process.generator = cms.EDFilter("ExhumeGeneratorFilter",
     pythiaPylistVerbosity = cms.untracked.int32(1)
 )
 
+# Production Info
+process.configurationMetadata = cms.untracked.PSet(
+    annotation = cms.untracked.string('GluGluTo2Jets_M_100_7TeV_exhume_cff.py nevts:1'),
+    name = cms.untracked.string('Applications'),
+    version = cms.untracked.string('$Revision: 1.19 $')
+)
+
+
 process.ProductionFilterSequence = cms.Sequence(process.generator)
 
-# Path and EndPath definitions
+############
+process.o1 = cms.OutputModule("PoolOutputModule",
+        outputCommands = cms.untracked.vstring('keep *'),
+        fileName = cms.untracked.string('GluGlu_step1_GEN_SIM_2021.root')
+        )
+
 process.generation_step = cms.Path(process.pgen)
 process.simulation_step = cms.Path(process.psim)
-process.g4Simhits_step = cms.Path(process.g4SimHits)
+
 
 process.genfiltersummary_step = cms.EndPath(process.genFilterSummary)
-process.endjob_step = cms.EndPath(process.endOfProcess)
-process.FEVTDEBUGoutput_step = cms.EndPath(process.FEVTDEBUGoutput)
-
-
-process.schedule = cms.Schedule(process.generation_step,process.genfiltersummary_step,process.g4Simhits_step,process.endjob_step,process.FEVTDEBUGoutput_step)
+process.outpath = cms.EndPath(process.o1)
+process.schedule = cms.Schedule(process.generation_step,process.genfiltersummary_step,process.simulation_step,process.outpath)
 
 # filter all path with the production filter sequence
 for path in process.paths:
-	getattr(process,path)._seq = process.ProductionFilterSequence * getattr(process,path)._seq 
+    getattr(process,path)._seq = process.ProductionFilterSequence * getattr(process,path)._seq
 
-
-from SimPPS.PPSSimTrackProducer.SimTrackProducerForFullSim_cff import customise
-process = customise(process)

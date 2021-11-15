@@ -2,24 +2,17 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step2 --filein=GluGlu_GEN_SIM_2017.root --conditions auto:run2_mc -s DIGI --datatier GEN-SIM-DIGI-RAW -n 10 --era Run2_2017 --eventcontent FEVTDEBUG --no_exec
+# with command line options: step2 --filein=file:GluGlu_GEN_SIM_2017.root --conditions auto:phase1_2021_realistic -s DIGI --datatier GEN-SIM-DIGI-RAW -n 10 --era Run3 --eventcontent FEVTDEBUG --no_exec
 import FWCore.ParameterSet.Config as cms
 
-from Configuration.StandardSequences.Eras import eras
+from Configuration.Eras.Era_Run3_cff import Run3
 
-process = cms.Process('DIGI', eras.Run3)
+process = cms.Process('DIGI',Run3)
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
-# process.MessageLogger.threshold = cms.untracked.string('INFO')
-# process.MessageLogger.cout.threshold = cms.untracked.string('INFO')
-# process.MessageLogger.debugModules = cms.untracked.vstring("*")
-# process.MessageLogger.destinations = cms.untracked.vstring('cout')
-# process.MessageLogger.cout = cms.untracked.PSet( threshold = cms.untracked.string('INFO'), enable = cms.untracked.bool(True))
-
-
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
@@ -27,10 +20,10 @@ process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load('Configuration.StandardSequences.Digi_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-process.load("Geometry.VeryForwardGeometry.geometryPPS_CMSxz_fromDD_2017_cfi") # <--
+# process.load('Configuration.Geometry.GeometryExtended2021_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(1),
+    input = cms.untracked.int32(-1),
 )
 
 
@@ -43,7 +36,7 @@ process.RandomNumberGeneratorService.DiamondDetDigitizer = cms.PSet(initialSeed 
 # Input source
 process.source = cms.Source("PoolSource",
     dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
-    fileNames = cms.untracked.vstring('file:GluGlu_GEN_SIM_2017.root'),
+    fileNames = cms.untracked.vstring('file:GluGlu_step1_GEN_SIM_2021.root'),
     inputCommands = cms.untracked.vstring(
         'keep *', 
         'drop *_genParticles_*_*', 
@@ -119,8 +112,7 @@ process.FEVTDEBUGoutput = cms.OutputModule("PoolOutputModule",
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-# process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2017_realistic', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2021_realistic', '')
 # process.content = cms.EDAnalyzer("EventContentAnalyzer")
 # process.Tracer = cms.Service("Tracer")
 # process.eca = cms.Path(process.content)

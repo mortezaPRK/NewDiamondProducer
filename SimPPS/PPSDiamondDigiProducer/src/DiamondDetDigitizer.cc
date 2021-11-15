@@ -9,7 +9,7 @@ DiamondDetDigitizer::DiamondDetDigitizer(const edm::ParameterSet &params,
                                          const edm::EventSetup &iSetup)
     : det_id_(det_id) {
   verbosity_ = params.getParameter<int>("RDimVerbosity");
-  theRDimDummyROCSimulator = std::make_unique<RDimDummyROCSimulator>(params, det_id_);
+  theRDimDummyROCSimulator = std::make_unique<RDimDummyROCSimulator>(params, eng, det_id_);
   theHitToChargeConvertor = RDimHitToCharge(params);
 }
 

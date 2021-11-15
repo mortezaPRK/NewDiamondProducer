@@ -1,8 +1,8 @@
 # Dimaond PPS Producer
 
 ### Configs:
-* To run simulation step, use `step1_GEN_SIM_new` config file
-* To run digitization step, use `step2_DIGI_new` config file
+* To run simulation step, use `step1_GEN_SIM` config file
+* To run digitization step, use `step2_DIGI` config file
 
 
 ### How to run:
@@ -11,6 +11,6 @@
 - git clone https://github.com/mortezaPRK/NewDiamondProducer.git .
 - cmsenv
 - scram b
-- cmsRun step1_GEN_SIM_new.py
-- cmsRun step2_DIGI_new.py
+- cmsRun step1_GEN_SIM.py
+- cmsRun step2_DIGI.py
 

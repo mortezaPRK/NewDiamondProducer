@@ -93,7 +93,8 @@ DiamondDigiProducer::DiamondDigiProducer(const edm::ParameterSet& conf) : conf_(
   containerToken = consumes<edm::PSimHitContainer>(edm::InputTag("g4SimHits", "CTPPSTimingHits"));
 
   verbosity_ = conf.getParameter<int>("RDimVerbosity");
-  std::vector<double> voltage_time_coef_ = conf_.getParameter<std::vector<double>>("RDimVoltageTimeCoef");
+  std::vector<edm::ParameterSet> voltage_time_coef_ =
+      conf_.getParameter<std::vector<edm::ParameterSet>>("RDimVoltageTimeCoef");
   RDimDummyROCSimulator::PopulateVTBins(voltage_time_coef_, 1000, 1.0, 5.0);
 
   std::vector<edm::ParameterSet> detectorsEffFactors_ =
@@ -112,19 +113,29 @@ void DiamondDigiProducer::fillDescriptions(edm::ConfigurationDescriptions& descr
   desc.add<std::string>("InputCollection", "g4SimHitsCTPPSTimingHits");
   desc.add<int>("RDimVerbosity", 0);
   desc.add<double>("RDimGeVPerElectron", 1.0);
-  desc.add<std::vector<double>>("RDimVoltageTimeCoef", {0.98, -0.196});
   desc.add<double>("RDimMinVoltage", 0.2);
   desc.add<double>("RDimLeadingEdgeHeightPercentage", 0.3);
   desc.add<double>("RDimKCoeff", .0);
-  desc.add<double>("RDimWCoeffA", 4.92027e-04);
-  desc.add<double>("RDimWCoeffB", 1.23091e+09);
-  desc.add<double>("RDimWCoeffC", -9.52939e+00);
-  desc.add<double>("RDimWCoeffD", 2.22430e-01);
 
-  edm::ParameterSetDescription factors_desc;
-  factors_desc.add<unsigned int>("DetID", 0);
-  factors_desc.add<double>("EffFactor", 0);
-  desc.addVPSet("RDimEffFactors", factors_desc);
+  edm::ParameterSetDescription diamond_eff_factors_desc;
+  diamond_eff_factors_desc.add<unsigned int>("DetID", 0);
+  diamond_eff_factors_desc.add<double>("EffFactor", 0);
+  desc.addVPSet("RDimEffFactors", diamond_eff_factors_desc);
+
+  edm::ParameterSetDescription voltage_time_coeff_desc;
+  voltage_time_coeff_desc.add<unsigned int>("Power", 0);
+  voltage_time_coeff_desc.add<double>("Coeff", 0);
+  desc.addVPSet("RDimVoltageTimeCoef", voltage_time_coeff_desc);
+
+  edm::ParameterSetDescription ledge_desc;
+  ledge_desc.add<double>("RangeStart", 0);
+  ledge_desc.add<double>("RangeEnd", 0);
+  edm::ParameterSetDescription ledge_fit_desc;
+  ledge_fit_desc.add<double>("Constant", 0);
+  ledge_fit_desc.add<double>("Mean", 0);
+  ledge_fit_desc.add<double>("Sigma", 0);
+  ledge_desc.add<edm::ParameterSetDescription>("Fit", ledge_fit_desc);
+  desc.addVPSet("RDimWCoeff", ledge_desc);
 
   descriptions.add("RDimDetDigitizer", desc);
 }
