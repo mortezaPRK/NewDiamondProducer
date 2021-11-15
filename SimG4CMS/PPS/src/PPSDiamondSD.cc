@@ -161,7 +161,7 @@ void PPSDiamondSD::stepInfo(const G4Step* aStep) {
   thePy_ = (aStep->GetPreStepPoint()->GetMomentum().y()) / GeV;
   thePz_ = (aStep->GetPreStepPoint()->GetMomentum().z()) / GeV;
   Tof_ = aStep->GetPreStepPoint()->GetGlobalTime() / nanosecond;
-  Eloss_ = (aStep->GetPreStepPoint()->GetTotalEnergyDeposit() / eV);  //pps added
+  Eloss_ = (aStep->GetTotalEnergyDeposit() / eV);  //pps added
   ParticleType_ = theTrack_->GetDefinition()->GetPDGEncoding();
 
   //corrected phi and theta treatment
