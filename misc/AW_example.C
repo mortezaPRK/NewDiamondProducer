@@ -18195,10 +18195,12 @@ TH2D *fillBins()
    return AmplitudeVsWidth_0_2__1;
 }
 
-
-void print_fit_info(TAxis *yAxis, TFitResultPtr prf, int start_bin, int end_bin)
+void print_fit_info(TAxis *yAxis, TFitResultPtr prf, int start_bin, int end_bin, int num_of_bin_slices)
 {
-   std::cout << "FIT => Range: [" << yAxis->GetBinLowEdge(start_bin) << "," << yAxis->GetBinUpEdge(end_bin) << "] "
+   auto low_edge = yAxis->GetBinLowEdge(start_bin);
+   auto up_edge = yAxis->GetBinUpEdge(end_bin);
+   std::cout << "FIT => Range: [" << low_edge << "," << up_edge << "] "
+             << "Bins => " << start_bin << "," << end_bin << " "
              << "Params => "
              << "Constant: " << prf->Parameter(0) << " "
              << "Mean: " << prf->Parameter(1) << " "
@@ -18206,6 +18208,14 @@ void print_fit_info(TAxis *yAxis, TFitResultPtr prf, int start_bin, int end_bin)
              << "Ndf: " << prf->Ndf() << " "
              << "Chi: " << prf->Chi2() << " "
              << "Chi/ndf: " << prf->Chi2() / prf->Ndf() << std::endl;
+   if (num_of_bin_slices)
+   {
+      auto dirname = std::to_string(num_of_bin_slices);
+      gSystem->Exec(("mkdir -p " + dirname).c_str());
+      std::string address = "./" + dirname + "/p" + std::to_string(low_edge) + "_" + std::to_string(up_edge) + ".png";
+      gPad->SaveAs(address.c_str());
+      gPad->Clear();
+   }
 }
 
 // Draw Whole Histogram
@@ -18218,7 +18228,8 @@ void AW_draw()
 // Draw Slice of projected Histogram
 void AW_draw_slice(int bin, int num_of_bin_slices = 10)
 {
-   if (bin < 0 || bin >= num_of_bin_slices) {
+   if (bin < 0 || bin >= num_of_bin_slices)
+   {
       std::cout << "bin should be between 0 and " << num_of_bin_slices << std::endl;
       return;
    }
@@ -18231,14 +18242,16 @@ void AW_draw_slice(int bin, int num_of_bin_slices = 10)
    int start_bin = bin * bin_size;
    int end_bin = start_bin + bin_size;
    TH1D *pr = AmplitudeVsWidth_0_2__1->ProjectionX("_px", start_bin, end_bin);
-   TFitResultPtr prf = pr->Fit("gaus", "SQN0", "", 5e-9, 18e-9);
+
+   TFitResultPtr prf = pr->Fit("gaus", "SQ", "", 5e-9, 18e-9);
    Int_t fitStatus = prf;
    if (fitStatus != 0)
    {
       std::cout << "could not fit for range: [" << start_bin << "," << end_bin << "] error: " << fitStatus << std::endl;
       return;
    }
-   print_fit_info(yAxis, prf, start_bin, end_bin);
+   print_fit_info(yAxis, prf, start_bin, end_bin, 0);
+
    pr->Draw();
 }
 
@@ -18250,20 +18263,74 @@ void AW_constat_slices(int num_of_bin_slices = 10)
    Int_t num_of_bins = yAxis->GetNbins();
 
    int bin_size = num_of_bins / num_of_bin_slices;
+   auto c = new TCanvas();
 
    for (int i = 0; i < num_of_bin_slices; i++)
    {
       int start_bin = i * bin_size;
       int end_bin = start_bin + bin_size;
       TH1D *pr = AmplitudeVsWidth_0_2__1->ProjectionX("_px", start_bin, end_bin);
-      TFitResultPtr prf = pr->Fit("gaus", "SQN0", "", 5e-9, 18e-9);
+      TFitResultPtr prf = pr->Rebin(5)->Fit("gaus", "SQ", "", 5e-9, 18e-9);
       Int_t fitStatus = prf;
       if (fitStatus != 0)
       {
          std::cout << "could not fit for range: [" << start_bin << "," << end_bin << "] error: " << fitStatus << std::endl;
          continue;
       }
-      print_fit_info(yAxis, prf, start_bin, end_bin);
+      print_fit_info(yAxis, prf, start_bin, end_bin, 0);
+      // print_fit_info(yAxis, prf, start_bin, end_bin, num_of_bin_slices);
+   }
+}
+
+// Finds best slice, based on minimum chi factor
+void AW_dynamic(int minimum_chi = 10)
+{
+   TH2D *AmplitudeVsWidth_0_2__1 = fillBins();
+   TAxis *yAxis = AmplitudeVsWidth_0_2__1->GetYaxis();
+   Int_t num_of_bins = yAxis->GetNbins();
+
+   auto c = new TCanvas();
+   int start_bin = 0;
+
+   while (true)
+   {
+
+      TH1D *pr = AmplitudeVsWidth_0_2__1->ProjectionX("_px", 0, start_bin);
+      TFitResultPtr prf = pr->Fit("gaus", "SQN0", "", 5e-9, 18e-9);
+      Int_t fitStatus = prf;
+      if (fitStatus == 0)
+      {
+         break;
+      }
+      else
+      {
+         start_bin++;
+      }
+   }
+   std::cout << "start bin is " << start_bin << std::endl;
+
+   int end_bin = num_of_bins;
+
+   while (true)
+   {
+      TH1D *pr = AmplitudeVsWidth_0_2__1->ProjectionX("_px", start_bin, end_bin - 1);
+      TFitResultPtr prf = pr->Rebin()->Fit("gaus", "SQ", "", 5e-9, 18e-9);
+      if (prf->Chi2() > minimum_chi)
+      {
+         int new_end = static_cast<int>((end_bin - start_bin) / 2) + start_bin;
+         end_bin = new_end;
+      }
+      else
+      {
+         print_fit_info(yAxis, prf, start_bin, end_bin - 1, minimum_chi);
+         if (end_bin == num_of_bins)
+         {
+            break;
+            std::cout << "finished" << std::endl;
+         }
+         start_bin = end_bin;
+         end_bin = num_of_bins;
+      }
    }
 }
 
