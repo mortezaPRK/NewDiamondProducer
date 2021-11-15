@@ -95,7 +95,7 @@ DiamondDigiProducer::DiamondDigiProducer(const edm::ParameterSet& conf) : conf_(
   verbosity_ = conf.getParameter<int>("RDimVerbosity");
   std::vector<edm::ParameterSet> voltage_time_coef_ =
       conf_.getParameter<std::vector<edm::ParameterSet>>("RDimVoltageTimeCoef");
-  RDimDummyROCSimulator::PopulateVTBins(voltage_time_coef_, 1000, 1.0, 5.0);
+  RDimDummyROCSimulator::PopulateVTBins(voltage_time_coef_, 1000, 0, 5.0);
 
   std::vector<edm::ParameterSet> detectorsEffFactors_ =
       conf_.getParameter<std::vector<edm::ParameterSet>>("RDimEffFactors");

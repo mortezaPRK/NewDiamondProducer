@@ -65,7 +65,7 @@ DiamondDetDigitizer = cms.EDProducer(
         cms.PSet(Power=cms.uint32(8), Coeff=cms.double(-0.000006481)),
     ),
     RDimMinVoltage=cms.double(0.2),
-    RDimLeadingEdgeHeightPercentage=cms.double(0.3),
+    RDimLeadingEdgeHeightPercentage=cms.double(0.7),
     RDimKCoeff=cms.double(0),
     RDimWCoeff=cms.VPSet(
         cms.PSet(

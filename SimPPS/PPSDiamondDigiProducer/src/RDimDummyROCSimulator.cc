@@ -111,8 +111,7 @@ double RDimDummyROCSimulator::getTrailingEdge(double vmax, double time_of_flight
 
 double RDimDummyROCSimulator::randomGaus(double constant, double mean, double sigma) {
   double result = CLHEP::RandGauss::shoot(rndEngine_, mean, sigma);
-  return result;
+  return result * 1000000000;
 }
-
 
 std::vector<std::pair<double, double>> RDimDummyROCSimulator::v_t_bins;
